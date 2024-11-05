@@ -24,10 +24,10 @@ sealed class HomeRoute(val route: String){
         }
     }
 }
+
 @Composable
-fun HomeNavGraph(paddingValues: PaddingValues,
-                 navController: NavHostController
-){
+fun HomeNavGraph(){
+    val navController = rememberNavController()
     val homeViewModel: MovieViewModel = viewModel()
 
     NavHost(navController = navController,

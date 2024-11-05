@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.jax.movies.navigation.HomeNavGraph
+import com.jax.movies.navigation.MainNavGraph
 import com.jax.movies.navigation.RootNavGraph
 
 
@@ -39,7 +40,7 @@ fun MainPages() {
             )
         }
     ) { paddingValues ->
-        HomeNavGraph(
+        MainNavGraph(
             paddingValues = paddingValues,
             navController = navController
         )

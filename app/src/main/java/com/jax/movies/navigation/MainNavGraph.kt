@@ -33,17 +33,7 @@ fun MainNavGraph(
         startDestination = BottomScreenItem.HomeScreen.route
     ) {
         composable(BottomScreenItem.HomeScreen.route) {
-            HomePage(
-                uiState = viewModel.uiState,
-                onMovieClick = {
-                    navController.navigate(ItemDetails.MovieDetail.route)
-                },
-                onTypeClick = {
-                    category, movies ->
-                    viewModel.setMovies(movies)
-                    navController.navigate(HomeRoute.OneTypeMovies.createRoute(category))
-                }
-            )
+            HomeNavGraph()
         }
         composable(BottomScreenItem.SearchScreen.route) {
             SearchScreen(paddingValues,
