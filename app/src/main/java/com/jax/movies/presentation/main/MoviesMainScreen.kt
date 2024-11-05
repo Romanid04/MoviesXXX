@@ -7,9 +7,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.jax.movies.navigation.MainNavGraph
+import com.jax.movies.navigation.HomeNavGraph
 import com.jax.movies.navigation.RootNavGraph
-import com.jax.movies.navigation.rememberNavigationState
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -40,7 +39,7 @@ fun MainPages() {
             )
         }
     ) { paddingValues ->
-        MainNavGraph(
+        HomeNavGraph(
             paddingValues = paddingValues,
             navController = navController
         )
