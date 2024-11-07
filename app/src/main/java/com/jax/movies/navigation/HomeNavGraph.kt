@@ -20,7 +20,7 @@ sealed class HomeRoute(val route: String){
     object MovieDetail: HomeRoute("movie_detail")
     object OneTypeMovies: HomeRoute("list_film/{category}"){
         fun createRoute(category: String): String {
-            return "list_film/category"
+            return "list_film/$category"
         }
     }
 }
