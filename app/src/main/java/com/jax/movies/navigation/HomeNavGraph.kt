@@ -43,7 +43,11 @@ fun HomeNavGraph(){
                 },
                 onMovieClick = {
                     navController.navigate(HomeRoute.MovieDetail.route)
+                },
+                retryAction = {
+                    homeViewModel.getMovies()
                 })
+
         }
 
         composable(route = HomeRoute.OneTypeMovies.route,

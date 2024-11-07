@@ -23,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -53,12 +54,18 @@ import com.jax.movies.data.UIState
 fun HomePage(
     uiState: UIState,
     onMovieClick: (Movie) -> Unit,
-    onTypeClick: (String, List<Movie>) -> Unit
+    onTypeClick: (String, List<Movie>) -> Unit,
+    retryAction: () -> Unit
 ) {
     when (uiState) {
         is UIState.Initial -> {}
         is UIState.Loading -> {
-            CircularProgressIndicator()
+            Box(modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator()
+
+            }
         }
         is UIState.Success -> {
 
@@ -88,57 +95,22 @@ fun HomePage(
                             onTypeClick(category, movies)
                         })
                 }
-//        LazyRowItem(
-//            items = AllMovies.premieres,
-//            type = "Премьера",
-//            onMovieClick = {
-//                onMovieClick(it, "Премьера")
-//            }
-//        )
-//        LazyRowItem(
-//            items = AllMovies.popular,
-//            type = "Популярное",
-//            onMovieClick = {
-//                onMovieClick(it, "Популярное")
-//            }
-//        )
-//        LazyRowItem(
-//            items = AllMovies.militants,
-//            type = "Боевики США",
-//            onMovieClick = {
-//                onMovieClick(it, "Боевики США")
-//            }
-//        )
-//        LazyRowItem(
-//            items = AllMovies.dramaOfFrance,
-//            type = "Драма Франции",
-//            onMovieClick = {
-//                onMovieClick(it, "Драма Франции")
-//            }
-//        )
-//
-//        LazyRowItem(
-//            items = AllMovies.top,
-//            type = "Топ-5",
-//            onMovieClick = {
-//                onMovieClick(it, "Топ-5")
-//            }
-//        )
-//        LazyRowItem(
-//            items = AllMovies.show,
-//            type = "Сериалы",
-//            onMovieClick = {
-//                onMovieClick(it, "Сериалы")
-//            }
-//        )
+
             }
         }
 
         is UIState.Error -> {
-            Text(
-                text = "Error",
-                color = Color.Red
-            )
+            Column (modifier = Modifier.fillMaxSize().padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center) {
+                Text(
+                    text = "Нет подключние к инернету",
+                    color = Color.Red
+                )
+                Button(onClick = { retryAction() }) {
+                    Text(text = "Попробовать снова")
+                }
+            }
         }
     }
 }

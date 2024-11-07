@@ -59,7 +59,7 @@ fun OneTypePage(
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp)
                 .padding(paddingValues),
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(3),
             verticalArrangement = Arrangement.spacedBy(30.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
