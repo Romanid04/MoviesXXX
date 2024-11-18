@@ -1,6 +1,7 @@
 package com.jax.movies.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.jax.movies.data.ActorDetailsResponse
 import com.jax.movies.data.ImageResponse
 import com.jax.movies.data.Movie
 import com.jax.movies.data.Response
@@ -23,7 +24,7 @@ private const val BASE_URL =
     "https://kinopoiskapiunofficial.tech/"
 
 private const val API_KEY =
-    "f21e5dec-bd33-4148-bcd4-ce71dd8c5595"
+    "7818d1ce-ec9d-43a7-b6f6-794adbe87cfc"
 
 val client = OkHttpClient.Builder()
     .addInterceptor(HttpLoggingInterceptor().apply {
@@ -42,41 +43,47 @@ interface MovieApiService {
 
     @GET("api/v2.2/films/premieres?year=2024&month=NOVEMBER")
     suspend fun getPremieres(
-        @Header("X-API-KEY") apiKey: String = API_KEY
+        @Header("X-API-KEY") apiKey: String = API_KEY,
     ): Response
 
     @GET("api/v2.2/films/premieres?year=2024&month=OCTOBER")
     suspend fun getPopularMovies(
-        @Header("X-API-KEY") apiKey: String = API_KEY
+        @Header("X-API-KEY") apiKey: String = API_KEY,
     ): Response
 
     @GET("api/v2.2/films/premieres?year=2024&month=MAY")
     suspend fun getMilitants(
-        @Header("X-API-KEY") apiKey: String = API_KEY
+        @Header("X-API-KEY") apiKey: String = API_KEY,
     ): Response
 
     @GET("api/v2.2/films/premieres?year=2024&month=SEPTEMBER")
     suspend fun getDramaOfFrance(
-        @Header("X-API-KEY") apiKey: String = API_KEY
+        @Header("X-API-KEY") apiKey: String = API_KEY,
     ): Response
 
     @GET("api/v2.2/films/{id}")
     suspend fun getMovieDetails(
         @Path("id") kinopoiskId: Int,
-        @Header("X-API-KEY") apiKey: String = API_KEY
+        @Header("X-API-KEY") apiKey:     String = API_KEY,
     ): Movie
 
     @GET("api/v1/staff?")
     suspend fun getMovieStaff(
         @Query("filmId") filmId: Int,
-        @Header("X-API-KEY") apiKey: String = API_KEY
+        @Header("X-API-KEY") apiKey: String = API_KEY,
     ): List<Staff>
 
     @GET("api/v2.2/films/{id}/images")
     suspend fun getMovieImages(
         @Path("id") kinopoiskId: Int,
-        @Header("X-API-KEY") apiKey: String = API_KEY
+        @Header("X-API-KEY") apiKey: String = API_KEY,
     ): ImageResponse
+
+    @GET("/api/v1/staff/{id}")
+    suspend fun getActorDetails(
+        @Path("id") id: Int,
+        @Header("X-API-KEY") apiKey: String = API_KEY,
+    ): ActorDetailsResponse
 
 //    @GET("api/v2.2/films/{id}/similars")
 //    suspend fun getSimilarMovies(

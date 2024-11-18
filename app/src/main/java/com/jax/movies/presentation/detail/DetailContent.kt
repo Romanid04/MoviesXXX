@@ -2,6 +2,7 @@ package com.jax.movies.presentation.detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.LaunchedEffect
@@ -27,16 +28,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.jax.movies.data.Movie
 import com.jax.movies.data.Staff
 import com.jax.movies.model.MovieDetailUIState
+import com.jax.movies.navigation.HomeRoute
 
 @Composable
 fun MovieDetailScreen(
     kinopoiskId: Int,
     viewModel: MovieDetailViewModel = viewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    navController: NavController
 ) {
     val uiState = viewModel.uiState.collectAsState().value
 
@@ -67,10 +71,15 @@ fun MovieDetailScreen(
                 MovieDetailsContent(
                     movie = uiState.movie,
                     actors = uiState.actors,
+                    onActorClick = { staffId ->
+                        val route = HomeRoute.ActorPage.createRoute(staffId)
+                        navController.navigate(route)
+                    },
                     employees = uiState.employees,
                     galleryImages = uiState.galleryImages,
                     onBackClick = onBackClick
                 )
+
             }
 
         }
@@ -89,7 +98,7 @@ fun MovieDetailScreen(
 }
 
 @Composable
-fun MovieDetailsContent(movie: Movie, actors: List<Staff>, employees: List<Staff>, galleryImages: List<String>, onBackClick: () -> Unit) {
+fun MovieDetailsContent(movie: Movie, onActorClick: (Int) -> Unit, actors: List<Staff>, employees: List<Staff>, galleryImages: List<String>, onBackClick: () -> Unit) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         // Back Button
         IconButton(onClick = onBackClick) {
@@ -160,8 +169,7 @@ fun MovieDetailsContent(movie: Movie, actors: List<Staff>, employees: List<Staff
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     row.forEach { actor ->
-                        StaffCard(actor)
-                    }
+                        StaffCard(actor, onClick = { onActorClick(actor.staffId) })}
                 }
             }
         }
@@ -188,7 +196,7 @@ fun MovieDetailsContent(movie: Movie, actors: List<Staff>, employees: List<Staff
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     row.forEach { employee ->
-                        StaffCard(employee)
+                        StaffCard(employee,onClick = {onActorClick(employee.staffId)})
                     }
                 }
             }
@@ -232,11 +240,12 @@ fun ImageCard(imageUrl: String) {
 }
 
 @Composable
-fun StaffCard(staff: Staff) {
+fun StaffCard(staff: Staff, onClick: (Int) -> Unit) {
     Column(
         modifier = Modifier
             .padding(8.dp)
-            .width(100.dp),
+            .width(100.dp)
+            .clickable { onClick(staff.staffId) }, // Переход на ActorPageScreen
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(

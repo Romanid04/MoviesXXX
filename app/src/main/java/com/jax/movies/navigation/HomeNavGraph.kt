@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.jax.movies.model.MovieViewModel
+import com.jax.movies.presentation.detail.ActorFilmographyScreen
+import com.jax.movies.presentation.detail.ActorPageScreen
 import com.jax.movies.presentation.detail.MovieDetailScreen
 import com.jax.movies.presentation.main.HomePage
 import com.jax.movies.presentation.main.OneTypePage
@@ -20,16 +22,24 @@ sealed class HomeRoute(val route: String){
             return "list_film/$category"
         }
     }
+    object ActorPage : HomeRoute("actor_page/{staffId}") {
+        fun createRoute(staffId: Int): String = "actor_page/$staffId"
+    }
+    object ActorFilmography : HomeRoute("actor_filmography/{staffId}") {
+        fun createRoute(staffId: Int): String = "actor_filmography/$staffId"
+    }
 }
 
 @Composable
-fun HomeNavGraph(){
+fun HomeNavGraph() {
     val navController = rememberNavController()
     val homeViewModel: MovieViewModel = viewModel()
 
-    NavHost(navController = navController,
+    NavHost(
+        navController = navController,
         route = GRAPH.MAIN_GRAPH,
-        startDestination = HomeRoute.Home.route) {
+        startDestination = HomeRoute.Home.route
+    ) {
         composable(
             route = HomeRoute.Home.route
         ) {
@@ -48,7 +58,8 @@ fun HomeNavGraph(){
 
         }
 
-        composable(route = HomeRoute.OneTypeMovies.route,
+        composable(
+            route = HomeRoute.OneTypeMovies.route,
             arguments = listOf(navArgument("category") { type = NavType.StringType })
         ) { backStackEntry ->
             val category = backStackEntry.arguments?.getString("category") ?: "Заглушка"
@@ -73,12 +84,33 @@ fun HomeNavGraph(){
             val kinopoiskId = backStackEntry.arguments?.getInt("kinopoiskId") ?: 0
             MovieDetailScreen(
                 kinopoiskId = kinopoiskId,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack()},
+                navController = navController
+            )
+        }
+
+        composable(
+            route = HomeRoute.ActorPage.route,
+            arguments = listOf(navArgument("staffId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val staffId = backStackEntry.arguments?.getInt("staffId") ?: 0
+            ActorPageScreen(
+                staffId = staffId,
+                onBackClick = { navController.popBackStack() },
+                onFilmographyClick = { actorId -> navController.navigate(HomeRoute.ActorFilmography.createRoute(actorId)) }
             )
         }
 
 
-
-
+        composable(
+            route = HomeRoute.ActorFilmography.route,
+            arguments = listOf(navArgument("staffId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val staffId = backStackEntry.arguments?.getInt("staffId") ?: 0
+            ActorFilmographyScreen(
+                staffId = staffId,
+                onBackClick = { navController.popBackStack() }
+            )
+        }
     }
 }
