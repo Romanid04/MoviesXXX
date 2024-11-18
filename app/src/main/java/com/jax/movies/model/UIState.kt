@@ -1,4 +1,6 @@
-package com.jax.movies.data
+package com.jax.movies.model
+
+import com.jax.movies.data.Movie
 
 
 sealed class UIState {

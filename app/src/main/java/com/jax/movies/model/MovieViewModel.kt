@@ -1,4 +1,4 @@
-package com.jax.movies.data
+package com.jax.movies.model
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jax.movies.data.Movie
 import com.jax.movies.network.Api
 import kotlinx.coroutines.launch
 
@@ -50,4 +51,6 @@ class MovieViewModel: ViewModel() {
             }
         }
     }
+
+
 }

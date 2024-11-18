@@ -1,19 +1,16 @@
 package com.jax.movies.navigation
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.jax.movies.data.MovieViewModel
-import com.jax.movies.presentation.detail.DetailContent
+import com.jax.movies.model.MovieViewModel
+import com.jax.movies.presentation.detail.MovieDetailScreen
 import com.jax.movies.presentation.main.HomePage
 import com.jax.movies.presentation.main.OneTypePage
-import kotlinx.coroutines.flow.callbackFlow
 
 sealed class HomeRoute(val route: String){
     object Home: HomeRoute("home")
@@ -37,12 +34,13 @@ fun HomeNavGraph(){
             route = HomeRoute.Home.route
         ) {
             HomePage(uiState = homeViewModel.uiState,
+                navController = navController,
                 onTypeClick = { category, movies ->
                     homeViewModel.setMovies(movies)
                     navController.navigate(HomeRoute.OneTypeMovies.createRoute(category))
                 },
-                onMovieClick = {
-                    navController.navigate(HomeRoute.MovieDetail.route)
+                onMovieClick = { movie ->
+                    navController.navigate("${HomeRoute.MovieDetail.route}/${movie.kinopoiskId}")
                 },
                 retryAction = {
                     homeViewModel.getMovies()
@@ -58,6 +56,7 @@ fun HomeNavGraph(){
 
             OneTypePage(category = category,
                 movie = movies,
+                //navController = navController,
                 onMovieClick = {
                     navController.navigate(HomeRoute.MovieDetail.route)
                 },
@@ -66,8 +65,20 @@ fun HomeNavGraph(){
                 }
             )
         }
-        composable(HomeRoute.MovieDetail.route) {
-            DetailContent(name = HomeRoute.MovieDetail.route)
+
+        composable(
+            route = "movieDetail/{kinopoiskId}",
+            arguments = listOf(navArgument("kinopoiskId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val kinopoiskId = backStackEntry.arguments?.getInt("kinopoiskId") ?: 0
+            MovieDetailScreen(
+                kinopoiskId = kinopoiskId,
+                onBackClick = { navController.popBackStack() }
+            )
         }
+
+
+
+
     }
 }

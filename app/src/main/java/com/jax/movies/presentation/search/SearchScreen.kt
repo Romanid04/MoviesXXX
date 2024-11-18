@@ -1,6 +1,5 @@
 package com.jax.movies.presentation.search
 
-import android.provider.Contacts.Intents.UI
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,11 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.jax.movies.data.UIState
+import com.jax.movies.model.UIState
 
 @Composable
 fun SearchScreen(paddingValues: PaddingValues,
-                 uiState: UIState) {
+                 uiState: UIState
+) {
     when(uiState){
         is UIState.Loading -> {
             CircularProgressIndicator(modifier = Modifier.padding(paddingValues))

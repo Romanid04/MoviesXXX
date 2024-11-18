@@ -10,11 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun ProfileScreen(paddingValues: PaddingValues) {
+fun ProfileScreen() {
     Box(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
+            .fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Text(text = "Profile Screen")

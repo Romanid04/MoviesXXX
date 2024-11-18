@@ -32,8 +32,3 @@ sealed class BottomScreenItem(
         const val PROFILE = "profile"
     }
 }
-sealed class ItemDetails(
-    val route: String
-){
-    object MovieDetail: ItemDetails("details")
-}

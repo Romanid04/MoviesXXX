@@ -16,7 +16,7 @@ fun RootNavGraph() {
     NavHost(
         navController = navController,
         route = GRAPH.ROOT,
-        startDestination = GRAPH.ON_BOARDING_SCREEN,
+        startDestination = GRAPH.MAIN_GRAPH,
     ) {
         composable(route = GRAPH.ON_BOARDING_SCREEN) {
             OnBoardingScreen(onFinish = {
