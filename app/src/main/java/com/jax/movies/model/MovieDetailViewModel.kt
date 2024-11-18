@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+
 class MovieDetailViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<MovieDetailUIState>(MovieDetailUIState.Initial)
     val uiState: StateFlow<MovieDetailUIState> get() = _uiState
@@ -21,9 +22,17 @@ class MovieDetailViewModel : ViewModel() {
                 val movie = Api.retrofitService.getMovieDetails(kinopoiskId = kinopoiskId)
                 val staff = Api.retrofitService.getMovieStaff(filmId = kinopoiskId)
                 val actors = staff.filter { it.professionKey == "ACTOR" }
-                val employees = staff.filter { it.professionKey != "ACTOR"}
+                val employees = staff.filter { it.professionKey != "ACTOR" }
 
-                _uiState.value = MovieDetailUIState.Success(movie = movie, actors = actors, employees = employees)
+                val imagesResponse = Api.retrofitService.getMovieImages(kinopoiskId)
+                val images = imagesResponse.items.map { it.imageUrl }
+
+                _uiState.value = MovieDetailUIState.Success(
+                    movie = movie,
+                    actors = actors,
+                    employees = employees,
+                    galleryImages = images
+                )
 
             } catch (e: Exception) {
                 _uiState.value =
@@ -32,8 +41,6 @@ class MovieDetailViewModel : ViewModel() {
             }
         }
     }
-
-
 
 
 }

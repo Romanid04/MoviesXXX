@@ -68,6 +68,7 @@ fun MovieDetailScreen(
                     movie = uiState.movie,
                     actors = uiState.actors,
                     employees = uiState.employees,
+                    galleryImages = uiState.galleryImages,
                     onBackClick = onBackClick
                 )
             }
@@ -88,7 +89,7 @@ fun MovieDetailScreen(
 }
 
 @Composable
-fun MovieDetailsContent(movie: Movie, actors: List<Staff>, employees: List<Staff>, onBackClick: () -> Unit) {
+fun MovieDetailsContent(movie: Movie, actors: List<Staff>, employees: List<Staff>, galleryImages: List<String>, onBackClick: () -> Unit) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
         // Back Button
         IconButton(onClick = onBackClick) {
@@ -193,24 +194,24 @@ fun MovieDetailsContent(movie: Movie, actors: List<Staff>, employees: List<Staff
             }
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
+
         Text(
             text = "Галерея",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Всего: ${employees.size}",
+            text = "Всего: ${galleryImages.size}",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(bottom = 8.dp)
         )
 
-
-        Spacer(modifier = Modifier.height(8.dp))
-
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(images) { imageUrl ->
+            items(galleryImages) { imageUrl ->
                 ImageCard(imageUrl)
             }
         }

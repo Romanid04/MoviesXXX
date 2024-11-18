@@ -4,7 +4,12 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Gallery(
-    @SerialName("posterUrl") val image: String,
-
+data class ImageResponse(
+    val items: List<ImageItem>
 )
+
+@Serializable
+data class ImageItem(
+    val imageUrl: String
+)
+

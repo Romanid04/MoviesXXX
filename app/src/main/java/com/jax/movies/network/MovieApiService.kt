@@ -1,6 +1,7 @@
 package com.jax.movies.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.jax.movies.data.ImageResponse
 import com.jax.movies.data.Movie
 import com.jax.movies.data.Response
 import com.jax.movies.data.Staff
@@ -71,6 +72,17 @@ interface MovieApiService {
         @Header("X-API-KEY") apiKey: String = API_KEY
     ): List<Staff>
 
+    @GET("api/v2.2/films/{id}/images")
+    suspend fun getMovieImages(
+        @Path("id") kinopoiskId: Int,
+        @Header("X-API-KEY") apiKey: String = API_KEY
+    ): ImageResponse
+
+//    @GET("api/v2.2/films/{id}/similars")
+//    suspend fun getSimilarMovies(
+//        @Path("id") kinopoiskId: Int,
+//        @Header("X-API-KEY") apiKey: String = API_KEY
+//    ): SimilarMoviesResponse
 
 }
 
