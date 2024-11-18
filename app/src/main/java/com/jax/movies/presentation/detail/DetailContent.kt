@@ -1,6 +1,7 @@
 package com.jax.movies.presentation.detail
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.LaunchedEffect
@@ -204,9 +205,29 @@ fun MovieDetailsContent(movie: Movie, actors: List<Staff>, employees: List<Staff
         )
 
 
+        Spacer(modifier = Modifier.height(8.dp))
 
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(images) { imageUrl ->
+                ImageCard(imageUrl)
+            }
+        }
 
     }
+}
+
+@Composable
+fun ImageCard(imageUrl: String) {
+    Image(
+        painter = rememberAsyncImagePainter(imageUrl),
+        contentDescription = null,
+        modifier = Modifier
+            .size(150.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.Gray)
+    )
 }
 
 @Composable
