@@ -12,7 +12,6 @@ class ActorPageViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<ActorPageUIState>(ActorPageUIState.Loading)
     val uiState: StateFlow<ActorPageUIState> get() = _uiState
 
-    // Функция для загрузки данных актера
     fun getActorDetails(staffId: Int) {
         viewModelScope.launch {
             _uiState.value = ActorPageUIState.Loading

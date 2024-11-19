@@ -9,9 +9,6 @@ import androidx.compose.runtime.LaunchedEffect
 import com.jax.movies.model.MovieDetailViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
@@ -77,7 +73,10 @@ fun MovieDetailScreen(
                     },
                     employees = uiState.employees,
                     galleryImages = uiState.galleryImages,
-                    onBackClick = onBackClick
+                    onBackClick = onBackClick,
+                    onGalleryClick = { movieId ->
+                        navController.navigate(HomeRoute.GalleryPage.createRoute(movieId = movieId))
+                    }
                 )
 
             }
@@ -87,7 +86,7 @@ fun MovieDetailScreen(
         is MovieDetailUIState.Error -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Нет подключние к инернету", color = MaterialTheme.colorScheme.error)
+                    Text("Нет подключние к инtернету", color = MaterialTheme.colorScheme.error)
                     Button(onClick = { viewModel.getMovieDetails(kinopoiskId) }) {
                         Text("Повторить")
                     }
@@ -98,14 +97,18 @@ fun MovieDetailScreen(
 }
 
 @Composable
-fun MovieDetailsContent(movie: Movie, onActorClick: (Int) -> Unit, actors: List<Staff>, employees: List<Staff>, galleryImages: List<String>, onBackClick: () -> Unit) {
+fun MovieDetailsContent(movie: Movie,
+                        onActorClick: (Int) -> Unit,
+                        actors: List<Staff>,
+                        employees: List<Staff>,
+                        galleryImages: List<String>,
+                        onBackClick: () -> Unit,
+                        onGalleryClick: (Int) -> Unit ) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        // Back Button
         IconButton(onClick = onBackClick) {
             Icon(Icons.Default.ArrowBack, contentDescription = "Back")
         }
 
-        // Movie Poster
         Image(
             painter = rememberAsyncImagePainter(movie.image),
             contentDescription = "Poster",
@@ -113,8 +116,6 @@ fun MovieDetailsContent(movie: Movie, onActorClick: (Int) -> Unit, actors: List<
                 .fillMaxWidth()
                 .height(300.dp)
         )
-
-        // Movie Details
         Text(
             text = movie.nameRu,
             style = MaterialTheme.typography.headlineMedium,
@@ -208,7 +209,10 @@ fun MovieDetailsContent(movie: Movie, onActorClick: (Int) -> Unit, actors: List<
         Text(
             text = "Галерея",
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.clickable {
+                onGalleryClick(movie.kinopoiskId)
+            }
         )
         Text(
             text = "Всего: ${galleryImages.size}",

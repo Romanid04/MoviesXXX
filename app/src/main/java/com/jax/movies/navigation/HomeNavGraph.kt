@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.jax.movies.model.MovieViewModel
 import com.jax.movies.presentation.detail.ActorFilmographyScreen
 import com.jax.movies.presentation.detail.ActorPageScreen
+import com.jax.movies.presentation.detail.GalleryScreen
 import com.jax.movies.presentation.detail.MovieDetailScreen
 import com.jax.movies.presentation.main.HomePage
 import com.jax.movies.presentation.main.OneTypePage
@@ -27,6 +28,9 @@ sealed class HomeRoute(val route: String){
     }
     object ActorFilmography : HomeRoute("actor_filmography/{staffId}") {
         fun createRoute(staffId: Int): String = "actor_filmography/$staffId"
+    }
+    object GalleryPage: HomeRoute("gallery/{movieId}"){
+        fun createRoute(movieId: Int): String = "gallery/$movieId"
     }
 }
 
@@ -67,7 +71,6 @@ fun HomeNavGraph() {
 
             OneTypePage(category = category,
                 movie = movies,
-                //navController = navController,
                 onMovieClick = {
                     navController.navigate(HomeRoute.MovieDetail.route)
                 },
@@ -111,6 +114,14 @@ fun HomeNavGraph() {
                 staffId = staffId,
                 onBackClick = { navController.popBackStack() }
             )
+        }
+        composable(
+            route = HomeRoute.GalleryPage.route,
+            arguments = listOf(navArgument("movieId"){ type = NavType.IntType})
+        ){ backStackEntry ->
+            val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
+            GalleryScreen(movieId = movieId,
+                onBackClick = { navController.popBackStack()})
         }
     }
 }

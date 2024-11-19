@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.jax.movies.model.MovieViewModel
 
 import com.jax.movies.presentation.main.BottomScreenItem
+import com.jax.movies.presentation.profile.ProfileScreen
 import com.jax.movies.presentation.search.SearchScreen
 
 @Composable
@@ -30,7 +31,8 @@ fun MainNavGraph(
             SearchScreen(paddingValues,
                 uiState = viewModel.uiState
         ) }
-        composable(BottomScreenItem.ProfileScreen.route) {}
+        composable(BottomScreenItem.ProfileScreen.route) {
+            ProfileScreen()
+        }
     }
-
 }
