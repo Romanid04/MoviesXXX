@@ -17,10 +17,24 @@ class ActorPageViewModel : ViewModel() {
             _uiState.value = ActorPageUIState.Loading
             try {
                 val actorDetails = Api.retrofitService.getActorDetails(staffId)
-                _uiState.value = ActorPageUIState.Success(actorDetails)
+                val filmsWithPosters = actorDetails.films.take(6).map { film ->
+                    val posterUrl = getMoviePoster(film.filmId)
+                    film.copy(description = posterUrl)
+                }
+                val updatedActorDetails = actorDetails.copy(films = filmsWithPosters)
+                _uiState.value = ActorPageUIState.Success(updatedActorDetails)
             } catch (e: Exception) {
-                _uiState.value = ActorPageUIState.Error(e.localizedMessage ?: "Ошибка загрузки данных актера")
+                _uiState.value = ActorPageUIState.Error(e.message ?: "Ошибка загрузки данных актера")
             }
+        }
+    }
+
+    private suspend fun getMoviePoster(filmId: Int): String? {
+        return try {
+            val response = Api.retrofitService.getMovieImages(filmId, type = "POSTER")
+            response.items.firstOrNull()?.imageUrl
+        } catch (e: Exception) {
+            null
         }
     }
 }

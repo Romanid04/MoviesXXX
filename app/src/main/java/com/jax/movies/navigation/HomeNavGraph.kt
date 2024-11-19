@@ -17,7 +17,9 @@ import com.jax.movies.presentation.main.OneTypePage
 
 sealed class HomeRoute(val route: String){
     object Home: HomeRoute("home")
-    object MovieDetail: HomeRoute("movie_detail")
+    object MovieDetail : HomeRoute("movie_detail/{movieId}") {
+        fun createRoute(movieId: Int): String = "movie_detail/$movieId"
+    }
     object OneTypeMovies: HomeRoute("list_film/{category}"){
         fun createRoute(category: String): String {
             return "list_film/$category"
@@ -97,12 +99,20 @@ fun HomeNavGraph() {
             arguments = listOf(navArgument("staffId") { type = NavType.IntType })
         ) { backStackEntry ->
             val staffId = backStackEntry.arguments?.getInt("staffId") ?: 0
+
             ActorPageScreen(
                 staffId = staffId,
                 onBackClick = { navController.popBackStack() },
-                onFilmographyClick = { actorId -> navController.navigate(HomeRoute.ActorFilmography.createRoute(actorId)) }
+                onFilmographyClick = { actorId ->
+                    navController.navigate(HomeRoute.ActorFilmography.createRoute(actorId))
+                },
+                onFilmClick = { filmId -> // Передаем обработчик клика на фильм
+                    navController.navigate(HomeRoute.MovieDetail.createRoute(filmId))
+                }
             )
         }
+
+
 
 
         composable(
