@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
-
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,10 +37,8 @@ fun ActorFilmographyScreen(
     onBackClick: () -> Unit,
     viewModel: ActorFilmographyViewModel = viewModel()
 ) {
-    // Подписываемся на состояние из ViewModel
-    val uiState = viewModel.uiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsState().value
 
-    // Загружаем фильмографию при первом рендере
     LaunchedEffect(staffId) {
         viewModel.getFilmography(staffId)
     }
@@ -58,42 +55,48 @@ fun ActorFilmographyScreen(
             )
         },
         content = { padding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) {
-                when (val state = uiState.value) {
-                    is FilmographyUIState.Loading -> {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            when (uiState) {
+                is FilmographyUIState.Loading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
                     }
+                }
 
-                    is FilmographyUIState.Error -> {
-                        Column(
-                            modifier = Modifier.align(Alignment.Center),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
+                is FilmographyUIState.Error -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "Ошибка: ${state.message}",
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodyMedium
+                                text = (uiState as FilmographyUIState.Error).message,
+                                color = MaterialTheme.colorScheme.error
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
                             Button(onClick = { viewModel.getFilmography(staffId) }) {
                                 Text("Повторить")
                             }
                         }
                     }
+                }
 
-                    is FilmographyUIState.Success -> {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(16.dp)
-                        ) {
-                            items(state.films) { film ->
-                                FilmCard(film)
-                            }
+                is FilmographyUIState.Success -> {
+                    val films = (uiState as FilmographyUIState.Success).films
+
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        items(films) { film ->
+                            FilmCard(film = film)
                         }
                     }
                 }

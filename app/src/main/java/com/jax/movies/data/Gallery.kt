@@ -12,4 +12,3 @@ data class ImageResponse(
 data class ImageItem(
     val imageUrl: String
 )
-
