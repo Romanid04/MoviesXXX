@@ -27,7 +27,7 @@ fun FilmCard(film: ActorFilm) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = film.nameRu ?: film.nameEn ?: "Без названия", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Рейтинг: ${film.ye ?: "Нет данных"}", style = MaterialTheme.typography.bodySmall)
+            Text(text = "Рейтинг: ${film.rating ?: "Нет данных"}", style = MaterialTheme.typography.bodySmall)
             Text(text = film.description ?: "Нет описания", style = MaterialTheme.typography.bodySmall)
         }
     }
