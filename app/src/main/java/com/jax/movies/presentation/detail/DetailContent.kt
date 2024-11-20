@@ -1,5 +1,6 @@
 package com.jax.movies.presentation.detail
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +10,9 @@ import androidx.compose.runtime.LaunchedEffect
 import com.jax.movies.model.MovieDetailViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,11 +26,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.jax.movies.data.Movie
+import com.jax.movies.data.SimilarMovie
+import com.jax.movies.data.SimilarMoviesResponse
 import com.jax.movies.data.Staff
 import com.jax.movies.model.MovieDetailUIState
 import com.jax.movies.navigation.HomeRoute
@@ -73,6 +80,7 @@ fun MovieDetailScreen(
                     },
                     employees = uiState.employees,
                     galleryImages = uiState.galleryImages,
+                    similarMovies = uiState.similarMovies,
                     onBackClick = onBackClick,
                     onGalleryClick = { movieId ->
                         navController.navigate(HomeRoute.GalleryPage.createRoute(movieId = movieId))
@@ -102,6 +110,7 @@ fun MovieDetailsContent(movie: Movie,
                         actors: List<Staff>,
                         employees: List<Staff>,
                         galleryImages: List<String>,
+                        similarMovies: List<SimilarMovie>,
                         onBackClick: () -> Unit,
                         onGalleryClick: (Int) -> Unit ) {
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
@@ -160,20 +169,7 @@ fun MovieDetailsContent(movie: Movie,
         )
 
         // Актеры
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(actors.chunked(4)) { row ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    row.forEach { actor ->
-                        StaffCard(actor, onClick = { onActorClick(actor.staffId) })}
-                }
-            }
-        }
+        StaffLazyRow(staffList = actors, onClick = onActorClick, numberColumnLazy = 4)
 
         Text(
             text = "Над фильмом работали",
@@ -187,22 +183,7 @@ fun MovieDetailsContent(movie: Movie,
         )
 
         // Работники
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(employees.chunked(4)) { row ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    row.forEach { employee ->
-                        StaffCard(employee,onClick = {onActorClick(employee.staffId)})
-                    }
-                }
-            }
-        }
-
+        StaffLazyRow(staffList = employees, onClick = onActorClick, numberColumnLazy = 2)
         Spacer(modifier = Modifier.height(8.dp))
 
 
@@ -228,6 +209,45 @@ fun MovieDetailsContent(movie: Movie,
             }
         }
 
+        // Похожие фильмы
+        Text(
+            text = "Похожие фильмы",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(similarMovies) { movie ->
+                SimilarMovieCard(movie)
+            }
+        }
+
+    }
+}
+
+@Composable
+fun SimilarMovieCard(movie: SimilarMovie) {
+    Column(
+        modifier = Modifier
+            .width(150.dp)
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = rememberAsyncImagePainter(movie.posterUrlPreview),
+            contentDescription = movie.nameRu ?: movie.nameEn,
+            modifier = Modifier
+                .height(200.dp)
+                .clip(RoundedCornerShape(8.dp))
+        )
+        Text(
+            text = movie.nameRu ?: movie.nameEn ?: movie.nameOriginal ?: "Неизвестно",
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
@@ -245,12 +265,12 @@ fun ImageCard(imageUrl: String) {
 
 @Composable
 fun StaffCard(staff: Staff, onClick: (Int) -> Unit) {
-    Column(
+    Row(
         modifier = Modifier
             .padding(8.dp)
-            .width(100.dp)
-            .clickable { onClick(staff.staffId) }, // Переход на ActorPageScreen
-        horizontalAlignment = Alignment.CenterHorizontally
+            .fillMaxWidth()
+            .clickable { onClick(staff.staffId) },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = rememberAsyncImagePainter(staff.posterUrl),
@@ -259,16 +279,47 @@ fun StaffCard(staff: Staff, onClick: (Int) -> Unit) {
                 .size(80.dp)
                 .clip(RoundedCornerShape(4.dp))
         )
-        Text(
-            text = staff.nameRu ?: "Неизвестно",
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = staff.description ?: "Роль неизвестна",
-            style = MaterialTheme.typography.bodySmall,
-            textAlign = TextAlign.Center,
-            color = Color.Gray
-        )
+        Column (modifier = Modifier.padding(4.dp),
+            ) {
+            Text(
+                text = staff.nameRu ?: "Неизвестно",
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = staff.description ?: "Роль неизвестна",
+                style = MaterialTheme.typography.bodySmall,
+                textAlign = TextAlign.Center,
+                color = Color.Gray
+            )
+        }
+
+    }
+}
+
+@Composable
+fun StaffLazyRow(
+    staffList: List<Staff>,
+    onClick: (Int) -> Unit,
+    numberColumnLazy: Int
+) {
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+
+        items(staffList.chunked(numberColumnLazy)) { row ->
+            Column(
+                modifier = Modifier.padding(end = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                row.forEach { staff ->
+                    StaffCard(
+                        staff = staff,
+                        onClick = onClick
+                    )
+                }
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.jax.movies.data.ActorDetailsResponse
 import com.jax.movies.data.ImageResponse
 import com.jax.movies.data.Movie
 import com.jax.movies.data.Response
+import com.jax.movies.data.SimilarMoviesResponse
 import com.jax.movies.data.Staff
 import kotlinx.serialization.json.Json
 import retrofit2.Retrofit
@@ -24,7 +25,7 @@ private const val BASE_URL =
     "https://kinopoiskapiunofficial.tech/"
 
 private const val API_KEY =
-    "01fcf565-4392-4293-b5a7-001aa301c409"
+    "f21e5dec-bd33-4148-bcd4-ce71dd8c5595"
 
 val client = OkHttpClient.Builder()
     .addInterceptor(HttpLoggingInterceptor().apply {
@@ -73,11 +74,11 @@ interface MovieApiService {
         @Header("X-API-KEY") apiKey: String = API_KEY,
     ): List<Staff>
 
-    @GET("api/v2.2/films/{id}/images")
-    suspend fun getMovieImages(
-        @Path("id") kinopoiskId: Int,
-        @Header("X-API-KEY") apiKey: String = API_KEY,
-    ): ImageResponse
+//    @GET("api/v2.2/films/{id}/images")
+//    suspend fun getMovieImages(
+//        @Path("id") kinopoiskId: Int,
+//        @Header("X-API-KEY") apiKey: String = API_KEY,
+//    ): ImageResponse
 
     @GET("api/v2.2/films/{id}/images")
     suspend fun getMovieImages(
@@ -92,11 +93,11 @@ interface MovieApiService {
         @Header("X-API-KEY") apiKey: String = API_KEY,
     ): ActorDetailsResponse
 
-//    @GET("api/v2.2/films/{id}/similars")
-//    suspend fun getSimilarMovies(
-//        @Path("id") kinopoiskId: Int,
-//        @Header("X-API-KEY") apiKey: String = API_KEY
-//    ): SimilarMoviesResponse
+    @GET("api/v2.2/films/{id}/similars")
+    suspend fun getSimilarMovies(
+        @Path("id") filmId: Int,
+        @Header("X-API-KEY") apiKey: String = API_KEY
+    ): SimilarMoviesResponse
 
 }
 

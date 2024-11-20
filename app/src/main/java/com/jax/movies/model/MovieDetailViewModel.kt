@@ -24,14 +24,18 @@ class MovieDetailViewModel : ViewModel() {
                 val actors = staff.filter { it.professionKey == "ACTOR" }
                 val employees = staff.filter { it.professionKey != "ACTOR" }
 
-                val imagesResponse = Api.retrofitService.getMovieImages(kinopoiskId)
+                val imagesResponse = Api.retrofitService.getMovieImages(kinopoiskId, "STILL")
                 val images = imagesResponse.items.map { it.imageUrl }
+
+                val similarMoviesResponse = Api.retrofitService.getSimilarMovies(kinopoiskId)
+                val similarMovies = similarMoviesResponse.items
 
                 _uiState.value = MovieDetailUIState.Success(
                     movie = movie,
                     actors = actors,
                     employees = employees,
-                    galleryImages = images
+                    galleryImages = images,
+                    similarMovies = similarMovies
                 )
 
             } catch (e: Exception) {
