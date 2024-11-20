@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.jax.movies.model.MovieViewModel
 import com.jax.movies.presentation.detail.ActorFilmographyScreen
 import com.jax.movies.presentation.detail.ActorPageScreen
+import com.jax.movies.presentation.detail.GalleryScreen
 //import com.jax.movies.presentation.detail.GalleryScreen
 import com.jax.movies.presentation.detail.MovieDetailScreen
 import com.jax.movies.presentation.main.HomePage
@@ -125,13 +126,13 @@ fun HomeNavGraph() {
                 onBackClick = { navController.popBackStack() }
             )
         }
-        /*composable(
+        composable(
             route = HomeRoute.GalleryPage.route,
             arguments = listOf(navArgument("movieId"){ type = NavType.IntType})
         ){ backStackEntry ->
             val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
             GalleryScreen(movieId = movieId,
                 onBackClick = { navController.popBackStack()})
-        }*/
+        }
     }
 }
