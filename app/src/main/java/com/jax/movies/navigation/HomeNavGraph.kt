@@ -107,7 +107,7 @@ fun HomeNavGraph() {
                 onFilmographyClick = { actorId ->
                     navController.navigate(HomeRoute.ActorFilmography.createRoute(actorId))
                 },
-                onFilmClick = { filmId -> // Передаем обработчик клика на фильм
+                onFilmClick = { filmId ->
                     navController.navigate(HomeRoute.MovieDetail.createRoute(filmId))
                 }
             )

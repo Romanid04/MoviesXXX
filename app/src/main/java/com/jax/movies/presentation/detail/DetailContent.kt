@@ -17,13 +17,24 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,12 +42,18 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.jax.movies.R
 import com.jax.movies.data.Movie
 import com.jax.movies.data.SimilarMovie
 import com.jax.movies.data.SimilarMoviesResponse
 import com.jax.movies.data.Staff
 import com.jax.movies.model.MovieDetailUIState
 import com.jax.movies.navigation.HomeRoute
+import com.jax.movies.ui.theme.Blue1
+import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 
 @Composable
 fun MovieDetailScreen(
@@ -67,8 +84,7 @@ fun MovieDetailScreen(
         is MovieDetailUIState.Success -> {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp),
+                    .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 MovieDetailsContent(
@@ -105,126 +121,243 @@ fun MovieDetailScreen(
 }
 
 @Composable
-fun MovieDetailsContent(movie: Movie,
-                        onActorClick: (Int) -> Unit,
-                        actors: List<Staff>,
-                        employees: List<Staff>,
-                        galleryImages: List<String>,
-                        similarMovies: List<SimilarMovie>,
-                        onBackClick: () -> Unit,
-                        onGalleryClick: (Int) -> Unit ) {
+fun MovieDetailsContent(
+    movie: Movie,
+    onActorClick: (Int) -> Unit,
+    actors: List<Staff>,
+    employees: List<Staff>,
+    galleryImages: List<String>,
+    similarMovies: List<SimilarMovie>,
+    onBackClick: () -> Unit,
+    onGalleryClick: (Int) -> Unit
+) {
+
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        IconButton(onClick = onBackClick) {
-            Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+        IconButton(
+            onClick = { onBackClick() },
+            modifier = Modifier
+                .padding(16.dp)
+                .zIndex(1f)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Назад",
+                tint = Color.Black
+            )
         }
 
-        Image(
-            painter = rememberAsyncImagePainter(movie.image),
-            contentDescription = "Poster",
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(300.dp)
-        )
-        Text(
-            text = movie.nameRu,
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Text(text = "Год: ${movie.year}", style = MaterialTheme.typography.bodyMedium)
-        Text(text = "Рейтинг: ${movie.rating}", style = MaterialTheme.typography.bodyMedium)
-        Text(
-            text = movie.shortDescription ?: "Описание отсутствует",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Text(
-            text = movie.description ?: "Описание отсутствует",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Text(
-            text = "Страны: ${movie.countries.joinToString(", ") { it.name }}",
-            style = MaterialTheme.typography.bodyMedium
-        )
-        Text(
-            text = "Жанры: ${movie.genres?.joinToString(", ") { it.name ?: "" } ?: "Нет жанров"}",
-            style = MaterialTheme.typography.bodyMedium
-        )
+                .size(GetScreenWidth().dp)
+            //.clip(RoundedCornerShape(8.dp))
 
-        Text(
-            text = (movie.ratingAgeLimits?.substring(3) ?: movie.ratingAgeLimits
-            ?: "Лимит на возраст отсутствует") + "+",
-            style = MaterialTheme.typography.bodyMedium
-        )
-
-        Spacer(Modifier.height(30.dp))
-
-        Text(
-            text = "В фильме снимались",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Всего актеров: ${actors.size}",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        // Актеры
-        StaffLazyRow(staffList = actors, onClick = onActorClick, numberColumnLazy = 4)
-
-        Text(
-            text = "Над фильмом работали",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = "Всего: ${employees.size}",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        // Работники
-        StaffLazyRow(staffList = employees, onClick = onActorClick, numberColumnLazy = 2)
-        Spacer(modifier = Modifier.height(8.dp))
-
-
-        Text(
-            text = "Галерея",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.clickable {
-                onGalleryClick(movie.kinopoiskId)
-            }
-        )
-        Text(
-            text = "Всего: ${galleryImages.size}",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(galleryImages) { imageUrl ->
-                ImageCard(imageUrl)
+
+            Image(
+                painter = rememberAsyncImagePainter(movie.image),
+                contentDescription = "Movie Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            // Градиент
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, Color.Black),
+                            startY = 0f,
+                            endY = Float.POSITIVE_INFINITY
+                        )
+                    )
+                    .align(Alignment.BottomCenter)
+            )
+
+            // Тексттер
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .align(Alignment.BottomCenter)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+                    // Рейтинг и описание
+                    Text(
+                        text = "${movie.rating ?: ""} ${movie.nameRu ?: ""}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        text = "${movie.year}, ${movie.genres?.joinToString(", ") { it.name ?: "" } ?: "Жанр неизвестен"}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        text = "${movie.countries.joinToString(", ") { it.name }} • ${movie.filmLength ?: "Неизвестно"} мин, ${
+                            movie.ratingAgeLimits?.substring(
+                                3
+                            ) ?: "?"
+                        }+",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = Color.Gray,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        IconButton(onClick = { }) {
+                            Icon(
+                                imageVector = Icons.Default.FavoriteBorder,
+                                contentDescription = "Лайк",
+                                tint = Color.White
+                            )
+                        }
+
+                        IconButton(onClick = {  }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.bookmarkborder),
+                                contentDescription = "Сохранить",
+                                tint = Color.White,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+
+                        IconButton(onClick = {  }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.visibleoff),
+                                contentDescription = "Скрыть",
+                                tint = Color.White,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+
+                        IconButton(onClick = {  }) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = "Поделиться",
+                                tint = Color.White
+                            )
+                        }
+
+                        IconButton(onClick = { }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "Ещё",
+                                tint = Color.White
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        var isExpanded by remember { mutableStateOf(false) }
+
+
+        Column(modifier = Modifier.padding(14.dp)) {
+            Text(
+                text = movie.shortDescription ?: "",
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp,
+                modifier = Modifier.padding(top = 10.dp)
+            )
+            Text(
+                text = movie.description ?: "",
+                fontWeight = FontWeight.Normal,
+                fontSize = 22.sp,
+                maxLines = if (isExpanded) Int.MAX_VALUE else 5,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 18.dp)
+                    .clickable { isExpanded = !isExpanded }
+            )
+
+
+            Spacer(Modifier.height(30.dp))
+
+            // Актеры
+            SimpleRow("В фильме снимались", "${actors.size}",
+                Modifier.padding(end = 4.dp))
+            StaffLazyRow(staffList = actors, onClick = onActorClick, numberColumnLazy = 4)
+
+            // Работники
+            SimpleRow("Над фильмом работали", "${employees.size}",
+                Modifier.padding(end = 4.dp))
+            StaffLazyRow(staffList = employees, onClick = onActorClick, numberColumnLazy = 2)
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Галерея
+            SimpleRow("Галерея", "${galleryImages.size}",
+                Modifier.clickable { onGalleryClick(movie.kinopoiskId) })
+            LazyRow( horizontalArrangement = Arrangement.spacedBy(8.dp) ) {
+                items(galleryImages) { imageUrl ->
+                    ImageCard(imageUrl)
+                }
+            }
+
+            // Похожие фильмы
+            SimpleRow("Похожие фильмы", "${similarMovies.size}",
+                Modifier.padding(end = 4.dp))
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(similarMovies) { movie ->
+                    SimilarMovieCard(movie)
+                }
             }
         }
 
-        // Похожие фильмы
-        Text(
-            text = "Похожие фильмы",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold
-        )
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items(similarMovies) { movie ->
-                SimilarMovieCard(movie)
-            }
-        }
 
     }
 }
+
+@Composable
+fun SimpleRow(text: String, size: String, modifier: Modifier) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            modifier = modifier
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = size,
+                color = Blue1,
+                fontWeight = FontWeight.Medium,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(end = 4.dp)
+            )
+            Image(
+                painter = painterResource(id = R.drawable.icontoleft),
+                contentDescription = "Movie Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.size(9.dp)
+            )
+        }
+    }
+
+}
+
 
 @Composable
 fun SimilarMovieCard(movie: SimilarMovie) {
@@ -259,7 +392,6 @@ fun ImageCard(imageUrl: String) {
         modifier = Modifier
             .size(150.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(Color.Gray)
     )
 }
 
@@ -270,7 +402,8 @@ fun StaffCard(staff: Staff, onClick: (Int) -> Unit) {
             .padding(8.dp)
             .fillMaxWidth()
             .clickable { onClick(staff.staffId) },
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Start
     ) {
         Image(
             painter = rememberAsyncImagePainter(staff.posterUrl),
@@ -279,8 +412,9 @@ fun StaffCard(staff: Staff, onClick: (Int) -> Unit) {
                 .size(80.dp)
                 .clip(RoundedCornerShape(4.dp))
         )
-        Column (modifier = Modifier.padding(4.dp),
-            ) {
+        Column(
+            modifier = Modifier.padding(4.dp),
+        ) {
             Text(
                 text = staff.nameRu ?: "Неизвестно",
                 style = MaterialTheme.typography.bodySmall,
@@ -305,12 +439,12 @@ fun StaffLazyRow(
 ) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
         items(staffList.chunked(numberColumnLazy)) { row ->
             Column(
-                modifier = Modifier.padding(end = 16.dp),
+                //modifier = Modifier.padding(end = 6.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 row.forEach { staff ->
@@ -322,4 +456,12 @@ fun StaffLazyRow(
             }
         }
     }
+}
+
+
+@Composable
+fun GetScreenWidth(): Int {
+    val configuration = LocalConfiguration.current
+    val screenWidthDp = configuration.screenWidthDp
+    return screenWidthDp
 }

@@ -15,7 +15,7 @@ class GalleryViewModel: ViewModel() {
         viewModelScope.launch {
             _uiState.value = GalleryUiState.Loading
             try {
-                val images = Api.retrofitService.getMovieImages(movieId)
+                val images = Api.retrofitService.getMovieImages(movieId, "STILL")
                 val galleryImages = images.items.map { it.imageUrl }
                 _uiState.value = GalleryUiState.Success(galleryImages)
             } catch (e: Exception) {

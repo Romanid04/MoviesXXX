@@ -17,10 +17,10 @@ class ActorFilmographyViewModel : ViewModel() {
             try {
                 val actorDetails = Api.retrofitService.getActorDetails(staffId)
                 val filmsWithPosters = actorDetails.films.map { film ->
-                    val posters = getMoviePosters(film.filmId) // Используем только POSTER
-                    film to posters.firstOrNull() // Берем первый доступный постер
+                    val posters = getMoviePosters(film.filmId)
+                    film to posters.firstOrNull()
                 }.map { (film, poster) ->
-                    film.copy(description = poster) // Сохраняем URL постера в description
+                    film.copy(description = poster)
                 }
                 _uiState.value = FilmographyUIState.Success(filmsWithPosters)
             } catch (e: Exception) {
@@ -32,9 +32,9 @@ class ActorFilmographyViewModel : ViewModel() {
 suspend fun getMoviePosters(kinopoiskId: Int): List<String> {
     return try {
         val response = Api.retrofitService.getMovieImages(kinopoiskId, type = "POSTER")
-        response.items.map { it.imageUrl } // Извлекаем URL постеров
+        response.items.map { it.imageUrl }
     } catch (e: Exception) {
-        emptyList() // Возвращаем пустой список в случае ошибки
+        emptyList()
     }
 }
 sealed class FilmographyUIState {
