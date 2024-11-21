@@ -83,7 +83,7 @@ interface MovieApiService {
     @GET("api/v2.2/films/{id}/images")
     suspend fun getMovieImages(
         @Path("id") kinopoiskId: Int,
-        @Query("type") type: String, // Фильтр по типу изображения
+        @Query("type") type: String,
         @Header("X-API-KEY") apiKey: String = API_KEY
     ): ImageResponse
 

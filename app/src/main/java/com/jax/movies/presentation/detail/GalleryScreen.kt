@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,7 +45,6 @@ fun GalleryScreen(movieId: Int,
     }
 
     when(galleryUiState){
-
         is GalleryUiState.Initial -> {}
         is GalleryUiState.Loading -> {
             CircularProgressIndicator(modifier = Modifier.fillMaxSize())
@@ -74,7 +74,8 @@ fun GalleryScreen(movieId: Int,
                 LazyVerticalGrid(
                     columns = GridCells.Adaptive(300.dp),
                     contentPadding = PaddingValues(10.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     itemsIndexed(galleryItems.chunked(2)) { index, galleryItem ->
                         if (index % 2 == 0) {
@@ -101,23 +102,29 @@ fun AlternatingItem(galleryItem1: String, galleryItem2: String){
         Image(
             painter = rememberAsyncImagePainter(galleryItem1),
             contentDescription = "gallery item",
-            modifier = Modifier.fillMaxHeight()
-                .weight(0.5f)
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(0.5f),
+            contentScale = ContentScale.Crop
             )
         Image(painter = rememberAsyncImagePainter(galleryItem2),
             contentDescription = "second gallery item",
-            modifier = Modifier.fillMaxHeight()
-                .weight(0.5f))
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(0.5f),
+        contentScale = ContentScale.Crop)
     }
 }
 
 @Composable
 fun SingleItem(galleryItem: String){
-    Row(modifier = Modifier.fillMaxWidth()
+    Row(modifier = Modifier
+        .fillMaxWidth()
         .height(150.dp)) {
         Image(painter = rememberAsyncImagePainter(galleryItem),
             contentDescription = "single gallery item",
-            modifier = Modifier.fillMaxSize())
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop)
     }
 }
 
