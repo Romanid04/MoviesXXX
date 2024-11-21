@@ -11,5 +11,5 @@ data class Staff(
     @SerialName("description") val description: String? = null,
     @SerialName("posterUrl") val posterUrl: String? = null,
     @SerialName("professionText") val professionText: String? = null,
-    @SerialName("professionKey") val professionKey: String?  = null // Например: "DIRECTOR", "ACTOR" и т.д.
+    @SerialName("professionKey") val professionKey: String?  = null
 )

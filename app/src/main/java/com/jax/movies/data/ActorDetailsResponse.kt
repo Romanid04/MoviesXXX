@@ -16,7 +16,7 @@ data class ActorDetailsResponse(
     @SerialName("birthplace") val birthplace: String?,
     @SerialName("profession") val profession: String?,
     @SerialName("facts") val facts: List<String>?,
-    @SerialName("films") val films: List<ActorFilm> // Список фильмов
+    @SerialName("films") val films: List<ActorFilm>
 )
 
 @Serializable

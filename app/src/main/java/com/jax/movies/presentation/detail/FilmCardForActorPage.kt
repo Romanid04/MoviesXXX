@@ -38,12 +38,11 @@ fun FilmCardForActorPage(
             .clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent // Устанавливаем прозрачный фон
+            containerColor = Color.Transparent
         )    ) {
         Column {
-            // Постер фильма
             Image(
-                painter = rememberAsyncImagePainter(film.description), // Здесь description хранит URL постера
+                painter = rememberAsyncImagePainter(film.description),
                 contentDescription = film.nameRu ?: "Постер",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -51,7 +50,6 @@ fun FilmCardForActorPage(
                 contentScale = ContentScale.Crop
             )
 
-            // Название фильма
             Text(
                 text = film.nameRu ?: "Неизвестно",
                 style = MaterialTheme.typography.bodyMedium,

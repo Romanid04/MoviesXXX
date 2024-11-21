@@ -50,7 +50,6 @@ import com.jax.movies.data.Staff
 import com.jax.movies.model.MovieDetailUIState
 import com.jax.movies.navigation.HomeRoute
 import com.jax.movies.ui.theme.Blue1
-import org.intellij.lang.annotations.JdkConstants.HorizontalAlignment
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex

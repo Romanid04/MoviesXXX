@@ -43,12 +43,11 @@ fun ActorPageScreen(
     onFilmClick: (Int) -> Unit,
     viewModel: ActorPageViewModel = viewModel()
 ) {
-    // Загружаем данные актера при старте экрана
     LaunchedEffect(staffId) {
         viewModel.getActorDetails(staffId)
     }
 
-    // Состояние UI, управляемое через ViewModel
+
     val uiState = viewModel.uiState.collectAsState().value
 
     when (uiState) {
@@ -80,12 +79,11 @@ fun ActorPageScreen(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-                // Кнопка "Назад"
+
                 IconButton(onClick = onBackClick) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Назад")
                 }
 
-                // Фото и информация об актере
                 Image(
                     painter = rememberAsyncImagePainter(actorDetails.posterUrl),
                     contentDescription = actorDetails.nameRu ?: actorDetails.nameEn,
@@ -106,7 +104,7 @@ fun ActorPageScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Заголовок "Фильмография" с кнопкой "Показать всё"
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -123,7 +121,6 @@ fun ActorPageScreen(
                     }
                 }
 
-                // Горизонтальный список фильмов
                 if (actorDetails.films.isNotEmpty()) {
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(3.dp),
