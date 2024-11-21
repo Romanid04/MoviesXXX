@@ -25,7 +25,7 @@ private const val BASE_URL =
     "https://kinopoiskapiunofficial.tech/"
 
 private const val API_KEY =
-    "8c4a8fce-e26c-4f56-9e86-ddec69fb1881"
+    "01fcf565-4392-4293-b5a7-001aa301c409"
 
 val client = OkHttpClient.Builder()
     .addInterceptor(HttpLoggingInterceptor().apply {

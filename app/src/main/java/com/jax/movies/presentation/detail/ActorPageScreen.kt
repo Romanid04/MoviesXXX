@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -47,7 +49,6 @@ fun ActorPageScreen(
         viewModel.getActorDetails(staffId)
     }
 
-
     val uiState = viewModel.uiState.collectAsState().value
 
     when (uiState) {
@@ -84,46 +85,77 @@ fun ActorPageScreen(
                     Icon(Icons.Default.ArrowBack, contentDescription = "Назад")
                 }
 
-                Image(
-                    painter = rememberAsyncImagePainter(actorDetails.posterUrl),
-                    contentDescription = actorDetails.nameRu ?: actorDetails.nameEn,
+
+                Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(300.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                )
+                        .padding(top = 8.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
 
-                Text(
-                    text = actorDetails.nameRu ?: actorDetails.nameEn ?: "Неизвестно",
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(text = "Возраст: ${actorDetails.age ?: "Неизвестно"}")
-                Text(text = "Дата рождения: ${actorDetails.birthday ?: "Неизвестно"}")
-                Text(text = "Место рождения: ${actorDetails.birthplace ?: "Неизвестно"}")
+                    Image(
+                        painter = rememberAsyncImagePainter(actorDetails.posterUrl),
+                        contentDescription = "",
+                        modifier = Modifier
+                            .width(200.dp)
+                            .height(300.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                    )
+
+
+                    Spacer(modifier = Modifier.width(16.dp))
+
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(end = 8.dp)
+                    ) {
+                        Text(
+                            text = actorDetails.nameRu ?: actorDetails.nameEn ?: "Неизвестно",
+                            style = MaterialTheme.typography.headlineMedium,
+                            fontWeight = FontWeight.Normal
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = actorDetails.profession ?: "Неизвестная профессия",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Фильмография",
-                        style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Column {
+                        Text(
+                            text = "Фильмография",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "${actorDetails.films.size} фильмов",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
 
                     TextButton(onClick = { onFilmographyClick(staffId) }) {
-                        Text("Показать всё")
+                        Text("К списку")
                     }
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // Список фильмов
                 if (actorDetails.films.isNotEmpty()) {
                     LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(3.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         items(actorDetails.films.take(6)) { film ->
