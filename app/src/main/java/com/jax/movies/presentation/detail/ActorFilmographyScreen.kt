@@ -108,36 +108,29 @@ fun ActorFilmographyScreen(
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
                             items(professions) { profession ->
-                                //val isSelected = selectedProfession.value == profession
+                                val isSelected = selectedProfession.value == profession
+                                val buttonColors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+                                    contentColor = if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+                                )
+                                val buttonBorder = BorderStroke(
+                                    1.dp, if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+
                                 Button(
                                     onClick = {
-                                        selectedProfession.value = if (selectedProfession.value == profession) null else profession
+                                        selectedProfession.value = if (isSelected) null else profession
                                     },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = if (selectedProfession.value == profession) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else {
-                                            MaterialTheme.colorScheme.surface
-                                        },
-                                        contentColor = if (selectedProfession.value == profession) {
-                                            MaterialTheme.colorScheme.onPrimary
-                                        } else {
-                                            MaterialTheme.colorScheme.onSurface
-                                        }
-                                    ),
-                                    border = if (selectedProfession.value == profession) {
-                                        BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
-                                    } else {
-                                        BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant)
-                                    }
+                                    colors = buttonColors,
+                                    border = buttonBorder
                                 ) {
                                     Text(
                                         text = profession.capitalize(),
                                         style = MaterialTheme.typography.bodyMedium
                                     )
                                 }
-
                             }
+
                         }
 
 
