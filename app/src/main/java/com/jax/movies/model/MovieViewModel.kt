@@ -7,10 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jax.movies.data.Movie
-import com.jax.movies.network.Api
+import com.jax.movies.repository.MovieRepository
 import kotlinx.coroutines.launch
 
+
 class MovieViewModel: ViewModel() {
+
+    val repository = MovieRepository()
 
     var uiState by mutableStateOf<UIState>(UIState.Initial)
         private set
@@ -32,10 +35,10 @@ class MovieViewModel: ViewModel() {
         viewModelScope.launch {
             uiState = UIState.Loading
             uiState = try {
-                val premieres = Api.retrofitService.getPremieres()
-                val popular = Api.retrofitService.getPopularMovies()
-                val militants = Api.retrofitService.getMilitants()
-                val dramaOfFrance = Api.retrofitService.getDramaOfFrance()
+                val premieres = repository.getPremieres()
+                val popular = repository.getPopularMovies()
+                val militants = repository.getMilitants()
+                val dramaOfFrance = repository.getDramaOfFrance()
 
                 UIState.Success(
                     movies = listOf(
@@ -51,6 +54,4 @@ class MovieViewModel: ViewModel() {
             }
         }
     }
-
-
 }

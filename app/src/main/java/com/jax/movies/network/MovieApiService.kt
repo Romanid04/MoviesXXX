@@ -21,23 +21,8 @@ import retrofit2.http.Query
 
 val json = Json { ignoreUnknownKeys = true }
 
-private const val BASE_URL =
-    "https://kinopoiskapiunofficial.tech/"
-
 private const val API_KEY =
-    "01fcf565-4392-4293-b5a7-001aa301c409"
-
-val client = OkHttpClient.Builder()
-    .addInterceptor(HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    })
-    .build()
-
-val retrofit = Retrofit.Builder()
-    .baseUrl(BASE_URL)
-    .client(client)
-    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-    .build()
+    "f70f35c2-7d9a-4a2a-9a2f-28269dea0f8c"
 
 
 interface MovieApiService {
@@ -74,16 +59,16 @@ interface MovieApiService {
         @Header("X-API-KEY") apiKey: String = API_KEY,
     ): List<Staff>
 
-//    @GET("api/v2.2/films/{id}/images")
+//    @GET("api/v2.2/films/{filmId}/images")
 //    suspend fun getMovieImages(
-//        @Path("id") kinopoiskId: Int,
+//        @Path("filmId") kinopoiskId: Int,
 //        @Header("X-API-KEY") apiKey: String = API_KEY,
 //    ): ImageResponse
 
     @GET("api/v2.2/films/{id}/images")
     suspend fun getMovieImages(
         @Path("id") kinopoiskId: Int,
-        @Query("type") type: String,
+        @Query("type") type: String = "STILL",
         @Header("X-API-KEY") apiKey: String = API_KEY
     ): ImageResponse
 
@@ -99,12 +84,5 @@ interface MovieApiService {
         @Header("X-API-KEY") apiKey: String = API_KEY
     ): SimilarMoviesResponse
 
-}
-
-
-object Api {
-    val retrofitService: MovieApiService by lazy {
-        retrofit.create(MovieApiService::class.java)
-    }
 }
 

@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-        kotlin("plugin.serialization") version "1.9.10" // use the Kotlin version you're using
+    kotlin("plugin.serialization") version "1.9.10" // use the Kotlin version you're using
 }
 
 android {
@@ -55,13 +55,12 @@ dependencies {
     implementation(libs.androidx.ui.test.android)
     implementation(libs.androidx.ui.test.android)
     implementation("io.coil-kt:coil-compose:2.0.0")
-
     implementation ("androidx.compose.runtime:runtime-livedata:1.5.1")
     implementation ("androidx.compose.runtime:runtime:1.5.1")
-    implementation ("androidx.compose.runtime:runtime-livedata:1.5.0") // Или актуальная версия
     implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0") // Или актуальная версия
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0") // Или актуальная версия
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0")
+    implementation(libs.androidx.espresso.core)
     val nav_version = "2.8.3"
     implementation("androidx.navigation:navigation-compose:$nav_version")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1") // Use latest version
@@ -92,5 +91,10 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
+    implementation ("androidx.activity:activity-compose:1.7.2")
+    implementation ("androidx.compose.ui:ui:1.6.0")
+    implementation ("androidx.compose.material:material:1.6.0")
+    implementation ("androidx.navigation:navigation-compose:2.7.1")
+
     debugImplementation(libs.androidx.ui.test.manifest)
 }

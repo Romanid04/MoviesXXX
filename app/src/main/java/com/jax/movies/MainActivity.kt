@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MoviesTheme {
-            MoviesMainScreen()
+                MoviesMainScreen()
             }
         }
     }

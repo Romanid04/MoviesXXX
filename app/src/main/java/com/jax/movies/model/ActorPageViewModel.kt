@@ -3,7 +3,7 @@ package com.jax.movies.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jax.movies.data.ActorDetailsResponse
-import com.jax.movies.network.Api
+import com.jax.movies.repository.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -12,11 +12,13 @@ class ActorPageViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<ActorPageUIState>(ActorPageUIState.Loading)
     val uiState: StateFlow<ActorPageUIState> get() = _uiState
 
+    val repository = MovieRepository()
+
     fun getActorDetails(staffId: Int) {
         viewModelScope.launch {
             _uiState.value = ActorPageUIState.Loading
             try {
-                val actorDetails = Api.retrofitService.getActorDetails(staffId)
+                val actorDetails = repository.getActorDetails(staffId)
                 val filmsWithPosters = actorDetails.films.take(6).map { film ->
                     val posterUrl = getMoviePoster(film.filmId)
                     film.copy(description = posterUrl)
@@ -31,7 +33,7 @@ class ActorPageViewModel : ViewModel() {
 
     private suspend fun getMoviePoster(filmId: Int): String? {
         return try {
-            val response = Api.retrofitService.getMovieImages(filmId, type = "POSTER")
+            val response = repository.getMovieImages(filmId, type = "POSTER")
             response.items.firstOrNull()?.imageUrl
         } catch (e: Exception) {
             null
