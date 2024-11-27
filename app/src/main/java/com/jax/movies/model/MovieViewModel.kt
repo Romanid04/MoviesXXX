@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jax.movies.data.Movie
+import com.jax.movies.intent.MovieIntent
 import com.jax.movies.repository.MovieRepository
 import kotlinx.coroutines.launch
 
@@ -31,7 +32,15 @@ class MovieViewModel: ViewModel() {
         return movie
     }
 
-    fun getMovies() {
+    fun fetchMovies(intent: MovieIntent){
+        viewModelScope.launch {
+            when(intent){
+                is MovieIntent.LoadImages -> getMovies()
+            }
+        }
+    }
+
+    private fun getMovies() {
         viewModelScope.launch {
             uiState = UIState.Loading
             uiState = try {

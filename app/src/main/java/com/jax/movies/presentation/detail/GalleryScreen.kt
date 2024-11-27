@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.jax.movies.intent.GalleryIntent
 import com.jax.movies.model.GalleryUiState
 import com.jax.movies.model.GalleryViewModel
 
@@ -43,7 +44,7 @@ fun GalleryScreen(movieId: Int,
     val galleryUiState = galleryViewModel.uiState.collectAsState().value
 
     LaunchedEffect(movieId) {
-        galleryViewModel.fetchGalleryImages(movieId)
+        galleryViewModel.fetchGallery(GalleryIntent.LoadImages(movieId))
     }
 
     when(galleryUiState){

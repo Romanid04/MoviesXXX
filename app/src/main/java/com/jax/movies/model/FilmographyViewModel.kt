@@ -3,6 +3,7 @@ package com.jax.movies.model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jax.movies.data.ActorFilm
+import com.jax.movies.intent.FilmographyIntent
 import com.jax.movies.repository.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,15 @@ class ActorFilmographyViewModel : ViewModel() {
 
     val repository = MovieRepository()
 
-    fun getFilmography(staffId: Int) {
+    fun fetchFilmography(intent: FilmographyIntent){
+        viewModelScope.launch {
+            when(intent){
+                is FilmographyIntent.GetFilmography -> getFilmography(intent.staffId)
+            }
+        }
+    }
+
+    private fun getFilmography(staffId: Int) {
         viewModelScope.launch {
             _uiState.value = FilmographyUIState.Loading
             try {

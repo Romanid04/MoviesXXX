@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.jax.movies.intent.MovieIntent
 import com.jax.movies.model.MovieViewModel
 import com.jax.movies.presentation.detail.ActorFilmographyScreen
 import com.jax.movies.presentation.detail.ActorPageScreen
@@ -60,7 +61,7 @@ fun HomeNavGraph() {
                     navController.navigate("${HomeRoute.MovieDetail.route}/${movie.kinopoiskId}")
                 },
                 retryAction = {
-                    homeViewModel.getMovies()
+                    homeViewModel.fetchMovies(MovieIntent.LoadImages)
                 })
 
         }

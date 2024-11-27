@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.jax.movies.intent.FilmographyIntent
 import com.jax.movies.model.ActorFilmographyViewModel
 import com.jax.movies.model.FilmographyUIState
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,7 +47,7 @@ fun ActorFilmographyScreen(
     val selectedProfession = remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(staffId) {
-        viewModel.getFilmography(staffId)
+        viewModel.fetchFilmography(FilmographyIntent.GetFilmography(staffId))
     }
 
     Scaffold(
@@ -85,7 +86,7 @@ fun ActorFilmographyScreen(
                                 text = (uiState as FilmographyUIState.Error).message,
                                 color = MaterialTheme.colorScheme.error
                             )
-                            Button(onClick = { viewModel.getFilmography(staffId) }) {
+                            Button(onClick = { viewModel.fetchFilmography(FilmographyIntent.GetFilmography(staffId)) }) {
                                 Text("Повторить")
                             }
                         }

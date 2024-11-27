@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
+import com.jax.movies.data.Movie
+import com.jax.movies.intent.MovieDetailIntent
 import com.jax.movies.repository.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,8 +20,16 @@ class MovieDetailViewModel : ViewModel() {
     val uiState: StateFlow<MovieDetailUIState> get() = _uiState
     val repository = MovieRepository()
 
+    fun fetchMovieDetails(intent: MovieDetailIntent){
+        viewModelScope.launch {
+            when (intent){
+                is MovieDetailIntent.FetchMovieDetails -> getMovieDetails(intent.kinopoiskId)
+            }
+        }
+    }
 
-    fun getMovieDetails(kinopoiskId: Int) {
+
+    private fun getMovieDetails(kinopoiskId: Int) {
         viewModelScope.launch {
             _uiState.value = MovieDetailUIState.Loading
             try {

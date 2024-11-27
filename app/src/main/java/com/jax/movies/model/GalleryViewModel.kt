@@ -2,6 +2,7 @@ package com.jax.movies.model
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jax.movies.intent.GalleryIntent
 import com.jax.movies.repository.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,15 @@ class GalleryViewModel: ViewModel() {
     val uiState: StateFlow<GalleryUiState> = _uiState
     val repository = MovieRepository()
 
-    fun fetchGalleryImages(movieId: Int) {
+    fun fetchGallery(intent: GalleryIntent){
+        viewModelScope.launch {
+            when(intent){
+                is GalleryIntent.LoadImages -> fetchGalleryImages(intent.movieId)
+            }
+        }
+    }
+
+    private fun fetchGalleryImages(movieId: Int) {
         viewModelScope.launch {
             _uiState.value = GalleryUiState.Loading
             try {

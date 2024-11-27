@@ -53,6 +53,7 @@ import com.jax.movies.ui.theme.Blue1
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.jax.movies.intent.MovieDetailIntent
 
 @Composable
 fun MovieDetailScreen(
@@ -64,7 +65,7 @@ fun MovieDetailScreen(
     val uiState = viewModel.uiState.collectAsState().value
 
     LaunchedEffect(Unit) {
-        viewModel.getMovieDetails(kinopoiskId)
+        viewModel.fetchMovieDetails(MovieDetailIntent.FetchMovieDetails(kinopoiskId))
     }
 
     when (uiState) {
@@ -110,7 +111,7 @@ fun MovieDetailScreen(
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text("Нет подключние к инtернету", color = MaterialTheme.colorScheme.error)
-                    Button(onClick = { viewModel.getMovieDetails(kinopoiskId) }) {
+                    Button(onClick = { viewModel.fetchMovieDetails(MovieDetailIntent.FetchMovieDetails(kinopoiskId)) }) {
                         Text("Повторить")
                     }
                 }

@@ -35,6 +35,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.lazy.items
 
 import coil.compose.rememberAsyncImagePainter
+import com.jax.movies.intent.ActorIntent
 import com.jax.movies.model.ActorPageUIState
 import com.jax.movies.model.ActorPageViewModel
 @Composable
@@ -46,7 +47,7 @@ fun ActorPageScreen(
     viewModel: ActorPageViewModel = viewModel()
 ) {
     LaunchedEffect(staffId) {
-        viewModel.getActorDetails(staffId)
+        viewModel.fetchActorDetails(ActorIntent.GetActorDetails(staffId))
     }
 
     val uiState = viewModel.uiState.collectAsState().value
@@ -65,7 +66,7 @@ fun ActorPageScreen(
                         text = "Ошибка: ${uiState.message}",
                         color = MaterialTheme.colorScheme.error
                     )
-                    Button(onClick = { viewModel.getActorDetails(staffId) }) {
+                    Button(onClick = { viewModel.fetchActorDetails(ActorIntent.GetActorDetails(staffId)) }) {
                         Text("Повторить")
                     }
                 }
