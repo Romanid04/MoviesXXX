@@ -394,7 +394,6 @@ fun StaffCard(staff: Staff, onClick: (Int) -> Unit) {
             //.background(Color.Red)
             .fillMaxWidth()
             .fillMaxHeight()
-            .padding(top = 8.dp)
             .clickable { onClick(staff.staffId) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
@@ -440,7 +439,7 @@ fun StaffLazyRow(
         items(staffList.chunked(numberColumnLazy)) { row ->
             Column(
                 modifier = Modifier.padding(end = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 row.forEach { staff ->
                     StaffCard(
