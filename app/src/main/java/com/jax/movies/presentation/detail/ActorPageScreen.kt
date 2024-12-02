@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -81,50 +79,27 @@ fun ActorPageScreen(
                     .fillMaxSize()
                     .padding(16.dp)
             ) {
-
                 IconButton(onClick = onBackClick) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Назад")
                 }
 
-
-                Row(
+                Image(
+                    painter = rememberAsyncImagePainter(actorDetails.posterUrl),
+                    contentDescription = actorDetails.nameRu ?: actorDetails.nameEn,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
+                        .height(300.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                )
 
-                    Image(
-                        painter = rememberAsyncImagePainter(actorDetails.posterUrl),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .width(200.dp)
-                            .height(300.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                    )
-
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(end = 8.dp)
-                    ) {
-                        Text(
-                            text = actorDetails.nameRu ?: actorDetails.nameEn ?: "Неизвестно",
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Normal
-                        )
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = actorDetails.profession ?: "Неизвестная профессия",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                Text(
+                    text = actorDetails.nameRu ?: actorDetails.nameEn ?: "Неизвестно",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(text = "Возраст: ${actorDetails.age ?: "Неизвестно"}")
+                Text(text = "Дата рождения: ${actorDetails.birthday ?: "Неизвестно"}")
+                Text(text = "Место рождения: ${actorDetails.birthplace ?: "Неизвестно"}")
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -133,30 +108,20 @@ fun ActorPageScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column {
-                        Text(
-                            text = "Фильмография",
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = "${actorDetails.films.size} фильмов",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    Text(
+                        text = "Фильмография",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
 
                     TextButton(onClick = { onFilmographyClick(staffId) }) {
-                        Text("К списку")
+                        Text("Показать всё")
                     }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // Список фильмов
                 if (actorDetails.films.isNotEmpty()) {
                     LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(3.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         items(actorDetails.films.take(6)) { film ->
