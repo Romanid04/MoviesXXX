@@ -57,6 +57,12 @@ import androidx.compose.ui.zIndex
 import com.jax.movies.intent.MovieDetailIntent
 import com.jax.movies.presentation.profile.ProfileScreen
 
+@Preview(showBackground = true)
+@Composable
+fun PreviewProfileScreen() {
+    ProfileScreen()
+}
+
 @Composable
 fun MovieDetailScreen(
     kinopoiskId: Int,
@@ -121,7 +127,6 @@ fun MovieDetailScreen(
         }
     }
 }
-
 @Composable
 fun MovieDetailsContent(
     movie: Movie,
@@ -133,13 +138,175 @@ fun MovieDetailsContent(
     onBackClick: () -> Unit,
     onGalleryClick: (Int) -> Unit
 ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(GetScreenWidth().dp)
+            ) {
+                Image(
+                    painter = rememberAsyncImagePainter(movie.image),
+                    contentDescription = "Movie Image",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
 
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            Brush.verticalGradient(
+                                colors = listOf(Color.Transparent, Color.Black),
+                                startY = 0f,
+                                endY = Float.POSITIVE_INFINITY
+                            )
+                        )
+                        .align(Alignment.BottomCenter)
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .align(Alignment.BottomCenter)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = "${movie.rating ?: ""} ${movie.nameRu ?: ""}",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Text(
+                            text = "${movie.year}, ${movie.genres?.joinToString(", ") { it.name ?: "" } ?: "Жанр неизвестен"}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Text(
+                            text = "${movie.countries.joinToString(", ") { it.name }} • ${movie.filmLength ?: "Неизвестно"} мин, ${
+                                movie.ratingAgeLimits?.substring(3) ?: "?"
+                            }+",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.Gray,
+                            textAlign = TextAlign.Center
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceAround,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            IconButton(onClick = { }) {
+                                Icon(
+                                    imageVector = Icons.Default.FavoriteBorder,
+                                    contentDescription = "Лайк",
+                                    tint = Color.White
+                                )
+                            }
+
+                            IconButton(onClick = {  }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.bookmarkborder),
+                                    contentDescription = "Сохранить",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+
+                            IconButton(onClick = {  }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.visibleoff),
+                                    contentDescription = "Скрыть",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(22.dp)
+                                )
+                            }
+
+                            IconButton(onClick = {  }) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = "Поделиться",
+                                    tint = Color.White
+                                )
+                            }
+
+                            IconButton(onClick = { }) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = "Ещё",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            var isExpanded by remember { mutableStateOf(false) }
+
+            Column(modifier = Modifier.padding(14.dp)) {
+                Text(
+                    text = movie.shortDescription ?: "",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 22.sp,
+                    modifier = Modifier.padding(top = 10.dp)
+                )
+                Text(
+                    text = movie.description ?: "",
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 22.sp,
+                    maxLines = if (isExpanded) Int.MAX_VALUE else 5,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.padding(top = 18.dp)
+                        .clickable { isExpanded = !isExpanded }
+                )
+
+                Spacer(Modifier.height(30.dp))
+
+                SimpleRow("В фильме снимались", "${actors.size}", Modifier.padding(end = 4.dp))
+                StaffLazyRow(staffList = actors, onClick = onActorClick, numberColumnLazy = 4)
+
+                SimpleRow("Над фильмом работали", "${employees.size}", Modifier.padding(end = 4.dp))
+                StaffLazyRow(staffList = employees, onClick = onActorClick, numberColumnLazy = 2)
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                SimpleRow("Галерея", "${galleryImages.size}", Modifier.clickable { onGalleryClick(movie.kinopoiskId) })
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(galleryImages) { imageUrl ->
+                        ImageCard(imageUrl)
+                    }
+                }
+
+                SimpleRow("Похожие фильмы", "${similarMovies.size}",
+                    Modifier.padding(end = 4.dp))
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(similarMovies) { movie ->
+                        SimilarMovieCard(movie)
+                    }
+                }
+            }
+        }
+
         IconButton(
             onClick = { onBackClick() },
             modifier = Modifier
+                .align(Alignment.TopStart)
                 .padding(16.dp)
-                .zIndex(1f)
         ) {
             Icon(
                 imageVector = Icons.Default.ArrowBack,
@@ -147,183 +314,6 @@ fun MovieDetailsContent(
                 tint = Color.Black
             )
         }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .size(GetScreenWidth().dp)
-            //.clip(RoundedCornerShape(8.dp))
-
-        ) {
-
-            Image(
-                painter = rememberAsyncImagePainter(movie.image),
-                contentDescription = "Movie Image",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            // Градиент
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, Color.Black),
-                            startY = 0f,
-                            endY = Float.POSITIVE_INFINITY
-                        )
-                    )
-                    .align(Alignment.BottomCenter)
-            )
-
-            // Тексттер
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .align(Alignment.BottomCenter)
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-
-                    // Рейтинг и описание
-                    Text(
-                        text = "${movie.rating ?: ""} ${movie.nameRu ?: ""}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = Color.Gray,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        text = "${movie.year}, ${movie.genres?.joinToString(", ") { it.name ?: "" } ?: "Жанр неизвестен"}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Text(
-                        text = "${movie.countries.joinToString(", ") { it.name }} • ${movie.filmLength ?: "Неизвестно"} мин, ${
-                            movie.ratingAgeLimits?.substring(
-                                3
-                            ) ?: "?"
-                        }+",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.Gray,
-                        textAlign = TextAlign.Center
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceAround,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        IconButton(onClick = { }) {
-                            Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
-                                contentDescription = "Лайк",
-                                tint = Color.White
-                            )
-                        }
-
-                        IconButton(onClick = {  }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.bookmarkborder),
-                                contentDescription = "Сохранить",
-                                tint = Color.White,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-
-                        IconButton(onClick = {  }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.visibleoff),
-                                contentDescription = "Скрыть",
-                                tint = Color.White,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-
-                        IconButton(onClick = {  }) {
-                            Icon(
-                                imageVector = Icons.Default.Share,
-                                contentDescription = "Поделиться",
-                                tint = Color.White
-                            )
-                        }
-
-                        IconButton(onClick = { }) {
-                            Icon(
-                                imageVector = Icons.Default.MoreVert,
-                                contentDescription = "Ещё",
-                                tint = Color.White
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        var isExpanded by remember { mutableStateOf(false) }
-
-
-        Column(modifier = Modifier.padding(14.dp)) {
-            Text(
-                text = movie.shortDescription ?: "",
-                fontWeight = FontWeight.Bold,
-                fontSize = 22.sp,
-                modifier = Modifier.padding(top = 10.dp)
-            )
-            Text(
-                text = movie.description ?: "",
-                fontWeight = FontWeight.Normal,
-                fontSize = 22.sp,
-                maxLines = if (isExpanded) Int.MAX_VALUE else 5,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(top = 18.dp)
-                    .clickable { isExpanded = !isExpanded }
-            )
-
-
-            Spacer(Modifier.height(30.dp))
-
-            // Актеры
-            SimpleRow("В фильме снимались", "${actors.size}",
-                Modifier.padding(end = 4.dp))
-            StaffLazyRow(staffList = actors, onClick = onActorClick, numberColumnLazy = 4)
-
-            // Работники
-            SimpleRow("Над фильмом работали", "${employees.size}",
-                Modifier.padding(end = 4.dp))
-            StaffLazyRow(staffList = employees, onClick = onActorClick, numberColumnLazy = 2)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Галерея
-            SimpleRow("Галерея", "${galleryImages.size}",
-                Modifier.clickable { onGalleryClick(movie.kinopoiskId) })
-            LazyRow( horizontalArrangement = Arrangement.spacedBy(8.dp) ) {
-                items(galleryImages) { imageUrl ->
-                    ImageCard(imageUrl)
-                }
-            }
-
-            // Похожие фильмы
-            SimpleRow("Похожие фильмы", "${similarMovies.size}",
-                Modifier.padding(end = 4.dp))
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(similarMovies) { movie ->
-                    SimilarMovieCard(movie)
-                }
-            }
-        }
-
-
     }
 }
 
@@ -401,8 +391,10 @@ fun ImageCard(imageUrl: String) {
 fun StaffCard(staff: Staff, onClick: (Int) -> Unit) {
     Row(
         modifier = Modifier
-            .padding(8.dp)
+            //.background(Color.Red)
             .fillMaxWidth()
+            .fillMaxHeight()
+            .padding(top = 8.dp)
             .clickable { onClick(staff.staffId) },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
@@ -411,13 +403,12 @@ fun StaffCard(staff: Staff, onClick: (Int) -> Unit) {
             painter = rememberAsyncImagePainter(staff.posterUrl),
             contentDescription = staff.nameRu ?: staff.nameEn ?: "Сотрудник",
             modifier = Modifier
-                .size(80.dp)
-                .clip(RoundedCornerShape(16.dp)),
-            Alignment.CenterStart
+                .fillMaxSize()
+                .size(90.dp)
+            //.clip(RoundedCornerShape(4.dp))
         )
         Column(
             modifier = Modifier.padding(4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = staff.nameRu ?: "Неизвестно",
@@ -448,7 +439,7 @@ fun StaffLazyRow(
 
         items(staffList.chunked(numberColumnLazy)) { row ->
             Column(
-                //modifier = Modifier.padding(end = 6.dp),
+                modifier = Modifier.padding(end = 6.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 row.forEach { staff ->
