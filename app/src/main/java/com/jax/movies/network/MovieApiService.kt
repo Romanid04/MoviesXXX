@@ -22,7 +22,7 @@ import retrofit2.http.Query
 val json = Json { ignoreUnknownKeys = true }
 
 private const val API_KEY =
-    "f70f35c2-7d9a-4a2a-9a2f-28269dea0f8c"
+    "f21e5dec-bd33-4148-bcd4-ce71dd8c5595"
 
 
 interface MovieApiService {

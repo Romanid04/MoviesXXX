@@ -51,9 +51,11 @@ import com.jax.movies.model.MovieDetailUIState
 import com.jax.movies.navigation.HomeRoute
 import com.jax.movies.ui.theme.Blue1
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.jax.movies.intent.MovieDetailIntent
+import com.jax.movies.presentation.profile.ProfileScreen
 
 @Composable
 fun MovieDetailScreen(
@@ -410,10 +412,12 @@ fun StaffCard(staff: Staff, onClick: (Int) -> Unit) {
             contentDescription = staff.nameRu ?: staff.nameEn ?: "Сотрудник",
             modifier = Modifier
                 .size(80.dp)
-                .clip(RoundedCornerShape(4.dp))
+                .clip(RoundedCornerShape(16.dp)),
+            Alignment.CenterStart
         )
         Column(
             modifier = Modifier.padding(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = staff.nameRu ?: "Неизвестно",

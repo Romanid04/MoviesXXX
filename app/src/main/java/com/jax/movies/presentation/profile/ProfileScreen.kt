@@ -31,11 +31,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 
+import androidx.compose.foundation.lazy.grid.*
+
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 @Preview(showBackground = true)
 @Composable
 fun PreviewProfileScreen() {
     ProfileScreen()
 }
+
+
 @Composable
 fun ProfileScreen() {
     var collections by remember {
@@ -80,9 +86,20 @@ fun ProfileScreen() {
             AddCollectionButton(onClick = { showDialog = true })
         }
 
-        // Отображение коллекций
-        items(collections) { collection ->
-            CollectionCard(collection = collection)
+        // Отображение коллекций с фиксированным размером
+        item {
+            // Используем LazyVerticalGrid с актуальными параметрами
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2), // Используем Fixed для 2 столбцов
+                modifier = Modifier.fillMaxWidth().height(400.dp), // Ограничиваем размер
+                contentPadding = PaddingValues(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(collections) { collection ->
+                    CollectionCard(collection = collection)
+                }
+            }
         }
 
         // Диалог для добавления новой коллекции
@@ -118,6 +135,58 @@ fun ProfileScreen() {
         }
     }
 }
+
+@Composable
+fun CollectionCard(collection: CollectionItemData) {
+    Box(
+        modifier = Modifier
+            .size(160.dp, 200.dp)  // Задаем фиксированный размер для карточки
+            .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
+            .background(Color.Transparent)
+            .padding(8.dp),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(id = collection.iconRes),
+                contentDescription = "Collection Icon",
+                modifier = Modifier.size(24.dp),
+                tint = Color.Unspecified
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = collection.name,
+                    style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(Color(0xFF3D3BFF))
+                        .padding(3.dp)
+                ) {
+                    Text(
+                        text = "${collection.itemCount}",
+                        style = TextStyle(fontSize = 14.sp, color = Color.White),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
+}
+
+
 
 @Composable
 fun SectionTitle(title: String) {
@@ -177,55 +246,6 @@ fun MovieCard(title: String) {
 
 data class CollectionItemData(val name: String, val itemCount: Int, val iconRes: Int)
 
-@Composable
-fun CollectionCard(collection: CollectionItemData) {
-    Box(
-        modifier = Modifier
-            .size(100.dp, 200.dp)
-            .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
-            .background(Color.Transparent)
-            .padding(8.dp),
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                painter = painterResource(id = collection.iconRes),
-                contentDescription = "Collection Icon",
-                modifier = Modifier.size(24.dp),
-                tint = Color.Unspecified
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = collection.name,
-                    style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Color(0xFF3D3BFF))
-                        .padding(3.dp)
-                ) {
-                    Text(
-                        text = "${collection.itemCount}",
-                        style = TextStyle(fontSize = 14.sp, color = Color.White),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Composable
 fun AddCollectionButton(onClick: () -> Unit) {
