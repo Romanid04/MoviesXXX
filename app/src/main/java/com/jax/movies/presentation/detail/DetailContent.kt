@@ -276,9 +276,12 @@ fun MovieDetailsContent(
                 Spacer(Modifier.height(30.dp))
 
                 SimpleRow("В фильме снимались", "${actors.size}", Modifier.padding(end = 4.dp))
+                Spacer(Modifier.height(20.dp))
                 StaffLazyRow(staffList = actors, onClick = onActorClick, numberColumnLazy = 4)
 
+                Spacer(Modifier.height(20.dp))
                 SimpleRow("Над фильмом работали", "${employees.size}", Modifier.padding(end = 4.dp))
+                Spacer(Modifier.height(20.dp))
                 StaffLazyRow(staffList = employees, onClick = onActorClick, numberColumnLazy = 2)
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -439,7 +442,7 @@ fun StaffLazyRow(
         items(staffList.chunked(numberColumnLazy)) { row ->
             Column(
                 modifier = Modifier.padding(end = 6.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 row.forEach { staff ->
                     StaffCard(
