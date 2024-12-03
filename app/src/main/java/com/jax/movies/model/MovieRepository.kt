@@ -4,6 +4,7 @@ import com.jax.movies.data.ActorDetailsResponse
 import com.jax.movies.data.ImageResponse
 import com.jax.movies.data.Movie
 import com.jax.movies.data.Response
+import com.jax.movies.data.SearchResponse
 import com.jax.movies.data.SimilarMoviesResponse
 import com.jax.movies.data.Staff
 import com.jax.movies.network.MovieApiFactory
@@ -20,6 +21,7 @@ interface Repository{
     suspend fun getActorDetails(id: Int): ActorDetailsResponse
     suspend fun getSimilarMovies(filmId: Int): SimilarMoviesResponse
     suspend fun getMovieImages(kinopoisk: Int, type: String): ImageResponse
+    suspend fun searchByKeyword(keyword: String): SearchResponse
 
 
 }
@@ -60,5 +62,9 @@ class MovieRepository: Repository {
 
     override suspend fun getMovieImages(kinopoisk: Int, type: String): ImageResponse {
         return retrofitService.getMovieImages(kinopoisk, type)
+    }
+
+    override suspend fun searchByKeyword(keyword: String): SearchResponse {
+        return retrofitService.searchByKeyword(keyword)
     }
 }

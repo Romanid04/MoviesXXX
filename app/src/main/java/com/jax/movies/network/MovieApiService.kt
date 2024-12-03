@@ -5,6 +5,7 @@ import com.jax.movies.data.ActorDetailsResponse
 import com.jax.movies.data.ImageResponse
 import com.jax.movies.data.Movie
 import com.jax.movies.data.Response
+import com.jax.movies.data.SearchResponse
 import com.jax.movies.data.SimilarMoviesResponse
 import com.jax.movies.data.Staff
 import kotlinx.serialization.json.Json
@@ -22,7 +23,7 @@ import retrofit2.http.Query
 val json = Json { ignoreUnknownKeys = true }
 
 private const val API_KEY =
-    "f21e5dec-bd33-4148-bcd4-ce71dd8c5595"
+    "f70f35c2-7d9a-4a2a-9a2f-28269dea0f8c"
 
 
 interface MovieApiService {
@@ -83,6 +84,12 @@ interface MovieApiService {
         @Path("id") filmId: Int,
         @Header("X-API-KEY") apiKey: String = API_KEY
     ): SimilarMoviesResponse
+
+    @GET("api/v2.1/films/search-by-keyword")
+    suspend fun searchByKeyword(
+        @Query("keyword") keyword: String,
+        @Header("X-API-KEY") apiKey: String = API_KEY
+    ): SearchResponse
 
 }
 

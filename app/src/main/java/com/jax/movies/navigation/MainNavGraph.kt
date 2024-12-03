@@ -4,9 +4,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.jax.movies.model.MovieViewModel
+import com.jax.movies.presentation.detail.MovieDetailScreen
 
 import com.jax.movies.presentation.main.BottomScreenItem
 import com.jax.movies.presentation.profile.ProfileScreen
@@ -14,11 +17,8 @@ import com.jax.movies.presentation.search.SearchScreen
 
 @Composable
 fun MainNavGraph(
-    paddingValues: PaddingValues,
     navController: NavHostController
 ) {
-
-    val viewModel: MovieViewModel = viewModel()
     NavHost(
         navController = navController,
         route = GRAPH.MAIN_GRAPH,
@@ -28,9 +28,7 @@ fun MainNavGraph(
             HomeNavGraph()
         }
         composable(BottomScreenItem.SearchScreen.route) {
-            SearchScreen(paddingValues,
-                uiState = viewModel.uiState
-        ) }
+            SearchScreen(navController) }
         composable(BottomScreenItem.ProfileScreen.route) {
             ProfileScreen()
         }

@@ -43,7 +43,6 @@ fun MainPages() {
     ) { paddingValues ->
         Box(modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding())) {
             MainNavGraph(
-                paddingValues = paddingValues,
                 navController = navController
             )
         }

@@ -45,7 +45,7 @@ fun HomeNavGraph() {
 
     NavHost(
         navController = navController,
-        route = GRAPH.MAIN_GRAPH,
+        route = GRAPH.HOME_GRAPH,
         startDestination = HomeRoute.Home.route
     ) {
         composable(
