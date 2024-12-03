@@ -24,9 +24,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.border
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,8 +37,12 @@ import androidx.compose.material3.Text
 fun PreviewProfileScreen() {
     ProfileScreen()
 }
-
-
+data class CollectionItemData(
+    val name: String,
+    val itemCount: Int,
+    val iconRes: Int,
+    val isUserCreated: Boolean = false
+)
 @Composable
 fun ProfileScreen() {
     var collections by remember {
@@ -49,7 +50,7 @@ fun ProfileScreen() {
             listOf(
                 CollectionItemData("Любимые", 0, R.drawable.like),
                 CollectionItemData("Хочу посмотреть", 0, R.drawable.bookmark_black),
-                CollectionItemData("Русское кино", 0, R.drawable.icon_profile)
+                CollectionItemData("Русское кино", 0, R.drawable.icon_profile, isUserCreated = true)
             )
         )
     }
@@ -57,59 +58,63 @@ fun ProfileScreen() {
     var showDialog by remember { mutableStateOf(false) }
     var newCollectionName by remember { mutableStateOf("") }
 
-    // Используем LazyColumn для всего экрана
+    val deleteCollection: (CollectionItemData) -> Unit = { collection ->
+        collections = collections.filter { it != collection }
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(16.dp)
     ) {
-        // Заголовок "Просмотрено"
         item {
             SectionTitle(title = "Просмотрено")
         }
 
-        // Секция просмотренных фильмов
         item {
             ViewedMoviesSection()
         }
 
-        // Отступ между секциями
         item {
             Spacer(modifier = Modifier.height(16.dp))
         }
 
-        // Заголовок "Коллекции"
+
         item {
             SectionTitle(title = "Коллекции")
         }
 
-        // Кнопка для добавления коллекции
         item {
             AddCollectionButton(onClick = { showDialog = true })
         }
 
-        // Отображение коллекций с фиксированным размером
         item {
-            // Используем LazyVerticalGrid с актуальными параметрами
             LazyVerticalGrid(
-                columns = GridCells.Fixed(2), // Используем Fixed для 2 столбцов
-                modifier = Modifier.fillMaxWidth().height(400.dp), // Ограничиваем размер
+                columns = GridCells.Fixed(2),
+                modifier = Modifier.fillMaxWidth().height(400.dp),
                 contentPadding = PaddingValues(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(collections) { collection ->
-                    CollectionCard(collection = collection)
+                    CollectionCard(
+                        collection = collection,
+                        onDelete = deleteCollection
+                    )
                 }
             }
         }
 
-        // Диалог для добавления новой коллекции
         if (showDialog) {
             item {
                 NewCollectionDialog(
                     onDismiss = { showDialog = false },
                     onAddCollection = { name ->
                         if (name.isNotBlank()) {
-                            collections = collections + CollectionItemData(name, 0, R.drawable.icon_profile)
+                            collections = collections + CollectionItemData(
+                                name = name,
+                                itemCount = 0,
+                                iconRes = R.drawable.icon_profile,
+                                isUserCreated = true
+                            )
                         }
                         showDialog = false
                     },
@@ -119,28 +124,25 @@ fun ProfileScreen() {
             }
         }
 
-        // Отступ между секциями
         item {
             Spacer(modifier = Modifier.height(16.dp))
         }
-
-        // Заголовок "Вам было интересно"
         item {
             SectionTitle(title = "Вам было интересно")
         }
-
-        // Секция интересных фильмов
         item {
             InterestedMoviesSection()
         }
     }
 }
-
 @Composable
-fun CollectionCard(collection: CollectionItemData) {
+fun CollectionCard(
+    collection: CollectionItemData,
+    onDelete: (CollectionItemData) -> Unit
+) {
     Box(
         modifier = Modifier
-            .size(160.dp, 200.dp)  // Задаем фиксированный размер для карточки
+            .size(150.dp, 160.dp)
             .border(1.dp, Color.Black, RoundedCornerShape(8.dp))
             .background(Color.Transparent)
             .padding(8.dp),
@@ -183,9 +185,22 @@ fun CollectionCard(collection: CollectionItemData) {
                 }
             }
         }
+
+        if (collection.isUserCreated) {
+            IconButton(
+                onClick = { onDelete(collection) },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.delete),
+                    contentDescription = "Удалить коллекцию",
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+        }
     }
 }
-
 
 
 @Composable
@@ -243,9 +258,6 @@ fun MovieCard(title: String) {
         }
     }
 }
-
-data class CollectionItemData(val name: String, val itemCount: Int, val iconRes: Int)
-
 
 @Composable
 fun AddCollectionButton(onClick: () -> Unit) {
