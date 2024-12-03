@@ -38,5 +38,5 @@ object GRAPH {
     const val ROOT = "root"
     const val ON_BOARDING_SCREEN = "onBoarding"
     const val MAIN_GRAPH = "main"
-    const val HOME_GRAPH = "home"
+    const val HOME_GRAPH = "homeGraph"
 }

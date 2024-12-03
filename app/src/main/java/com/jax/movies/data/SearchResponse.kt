@@ -14,7 +14,7 @@ data class SearchResponse (
 
 @Serializable
 data class Film(
-    @SerialName("filmId") val filmId: Int,
+    @SerialName("filmId") val kinopoiskId: Int,
     @SerialName("nameRu") val nameRu: String?=null,
     @SerialName("nameEn") val nameEn: String? = null,
     @SerialName("type") val type: String? = null,

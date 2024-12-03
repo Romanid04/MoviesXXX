@@ -168,9 +168,10 @@ import com.jax.movies.navigation.HomeRoute
 @Composable
 fun FilmItem(film: Film, navController: NavController){
     Row(modifier = Modifier.padding(start = 10.dp)
-        .clickable {
-            navController.navigate("movieDetail/${film.filmId}")
-        }) {
+//        .clickable {
+//            navController.navigate("movieDetail/${film.filmId}")
+//        }
+        ) {
         Log.d("FilmItem", "Poster URL: ${film.posterUrl}")
         Image(
             painter = rememberAsyncImagePainter(model = film.posterUrl),

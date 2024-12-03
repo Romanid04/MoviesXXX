@@ -386,7 +386,8 @@ fun ImageCard(imageUrl: String) {
         contentDescription = null,
         modifier = Modifier
             .size(150.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(8.dp)),
+        contentScale = ContentScale.Crop
     )
 }
 
